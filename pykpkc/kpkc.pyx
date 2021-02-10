@@ -1,4 +1,3 @@
-# distutils: extra_compile_args=-O3 -march=native -std=c++11
 from libcpp cimport bool
 from cysignals.signals cimport sig_on, sig_off
 from cysignals.memory cimport check_allocarray, check_reallocarray, check_calloc, sig_free

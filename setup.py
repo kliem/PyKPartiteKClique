@@ -22,6 +22,7 @@ setup(
             sources=["pykpkc/kpkc.pyx", "KPartiteKClique/kpkc.cpp"],
             language="c++",
             include_dirs=["KPartiteKClique", "pykpkc"],
+            extra_compile_args=["-std=c++11"],
             depends=["KPartiteKClique/kpkc.h", "pykpkc/kpkc.pxd"]),
         Extension(
             "_kpkc_memory_allocator",
