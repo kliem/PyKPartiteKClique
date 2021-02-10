@@ -2,7 +2,7 @@ from setuptools import setup
 from Cython.Build import cythonize
 
 setup(
-        name='k_partite_k_clique',
-        ext_modules=cythonize("k_partite_k_clique.pyx"),
+        name='kpkc',
+        ext_modules=cythonize("kpkc.pyx"),
         zip_safe=False,
         )

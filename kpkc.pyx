@@ -1,6 +1,6 @@
-# distutils: depends = KPartiteKClique/k_partite_k_clique.cpp KPartiteKClique/k_partite_k_clique.h
+# distutils: depends = KPartiteKClique/kpkc.cpp KPartiteKClique/kpkc.h
 # distutils: include_dirs = KPartiteKClique
-# distutils: sources = KPartiteKClique/k_partite_k_clique.cpp
+# distutils: sources = KPartiteKClique/kpkc.cpp
 # distutils: extra_compile_args=-O3 -march=native -std=c++11
 # distutils: language = c++
 
@@ -12,14 +12,8 @@ def KPartiteKClique_iter(G, parts, benchmark=False):
     """
     Iterates over all k-cliques
     """
-    cdef int n = G.order()
     cdef int i, j
-
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef bool ** incidences = <bool **> mem.allocarray(n, sizeof(bool *))
-    for i in range(n):
-        incidences[i] = <bool *> mem.calloc(n, sizeof(bool))
-
     assert isinstance(parts, list)  # We will allow more flexibility later.
 
     cdef int k = len(parts)
@@ -29,6 +23,12 @@ def KPartiteKClique_iter(G, parts, benchmark=False):
     for i in range(k):
         first_per_part[i] = counter
         counter += len(parts[i])
+
+    cdef int n = counter
+
+    cdef bool ** incidences = <bool **> mem.allocarray(n, sizeof(bool *))
+    for i in range(n):
+        incidences[i] = <bool *> mem.calloc(n, sizeof(bool))
 
     def id_to_part(index):
         for i in range(k):
@@ -51,13 +51,24 @@ def KPartiteKClique_iter(G, parts, benchmark=False):
 
     cdef int ui, vi
 
-    for u, v in G.edge_iterator(sort_vertices=False, labels=False):
-        ui = vertex_to_id[u]
-        vi = vertex_to_id[v]
-        if id_to_part_cached[ui] == id_to_part_cached[vi]:
-            raise ValueError("not a k-partite graph")
-        incidences[ui][vi] = True
-        incidences[vi][ui] = True
+    if hasattr(G, "edge_iterator"):
+        # G is probably a SageMath graph.
+        for u, v in G.edge_iterator(sort_vertices=False, labels=False):
+            ui = vertex_to_id[u]
+            vi = vertex_to_id[v]
+            if id_to_part_cached[ui] == id_to_part_cached[vi]:
+                raise ValueError("not a k-partite graph")
+            incidences[ui][vi] = True
+            incidences[vi][ui] = True
+    else:
+        for u, v in G:
+            ui = vertex_to_id[u]
+            vi = vertex_to_id[v]
+            if id_to_part_cached[ui] == id_to_part_cached[vi]:
+                raise ValueError("not a k-partite graph")
+            incidences[ui][vi] = True
+            incidences[vi][ui] = True
+
 
     if benchmark:
         yield []
