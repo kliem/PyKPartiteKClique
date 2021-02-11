@@ -7,3 +7,6 @@ cdef extern from "kpkc.h":
         KPartiteKClique()
         bool next()
         const int* k_clique()
+
+    cdef cppclass bitCLQ(KPartiteKClique):
+        pass
