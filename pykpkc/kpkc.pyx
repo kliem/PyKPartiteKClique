@@ -1,10 +1,9 @@
-from libcpp cimport bool
 from cysignals.signals cimport sig_on, sig_off
 from cysignals.memory cimport check_allocarray, check_reallocarray, check_calloc, sig_free
 
 from _kpkc_memory_allocator cimport MemoryAllocator
 
-def KPartiteKClique_iter(G, parts, benchmark=False):
+def KPartiteKClique_iter(G, parts, int prec_depth=5, benchmark=False):
     """
     Iterates over all k-cliques
     """
@@ -69,7 +68,7 @@ def KPartiteKClique_iter(G, parts, benchmark=False):
     if benchmark:
         yield []
 
-    cdef KPartiteKClique * K = new KPartiteKClique(incidences, n, first_per_part, k)
+    cdef KPartiteKClique * K = new KPartiteKClique(incidences, n, first_per_part, k, prec_depth)
 
     try:
         sig_on()
