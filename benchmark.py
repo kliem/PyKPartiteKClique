@@ -40,17 +40,17 @@ def test_random(*args):
     assert a == b
     print(len(a))
 
-def benchmark_sample(G):
+def benchmark_sample(G, prec_depth=5):
     dic_parts = {v: v[0] for v in G.vertices()}
     values = set(dic_parts.values())
     parts = [[] for _ in values]
     for vertex in dic_parts:
         parts[dic_parts[vertex]].append(vertex)
 
-    return _benchmark(G, parts)
+    return _benchmark(G, parts, prec_depth=prec_depth)
 
-def _benchmark(*args):
-    it = KPartiteKClique_iter(*args, benchmark=True)
+def _benchmark(*args, prec_depth=5):
+    it = KPartiteKClique_iter(*args, benchmark=True, prec_depth=prec_depth)
     _ = next(it)
     a = time()
     try:
