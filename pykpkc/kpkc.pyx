@@ -3,7 +3,7 @@ from cysignals.memory cimport check_allocarray, check_reallocarray, check_calloc
 
 from _kpkc_memory_allocator cimport MemoryAllocator
 
-def KPartiteKClique_iter(G, parts, int prec_depth=5, benchmark=False):
+def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark=False):
     """
     Iterates over all k-cliques
     """
@@ -68,16 +68,37 @@ def KPartiteKClique_iter(G, parts, int prec_depth=5, benchmark=False):
     if benchmark:
         yield []
 
-    cdef KPartiteKClique * K = new KPartiteKClique(incidences, n, first_per_part, k, prec_depth)
+    cdef KPartiteKClique* K
+    cdef bitCLQ* K1
 
-    try:
-        sig_on()
-        foo = K.next()
-        sig_off()
-        while foo:
-            yield [id_to_vertex(K.k_clique()[i]) for i in range(k)]
+    if algorithm == 'kpkc':
+        K = new KPartiteKClique(incidences, n, first_per_part, k, prec_depth)
+
+        try:
             sig_on()
             foo = K.next()
             sig_off()
-    finally:
-        del K
+            while foo:
+                yield [id_to_vertex(K.k_clique()[i]) for i in range(k)]
+                sig_on()
+                foo = K.next()
+                sig_off()
+        finally:
+            del K
+
+    elif algorithm == 'bitCLQ':
+        K1 = new bitCLQ(incidences, n, first_per_part, k, prec_depth)
+
+        try:
+            sig_on()
+            foo = K1.next()
+            sig_off()
+            while foo:
+                yield [id_to_vertex(K1.k_clique()[i]) for i in range(k)]
+                sig_on()
+                foo = K1.next()
+                sig_off()
+        finally:
+            del K1
+    else:
+        raise ValueError("unkown algorithm")

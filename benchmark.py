@@ -28,29 +28,32 @@ def get_random_k_partite_graph(n_parts, min_part_size, max_part_size, dens1, den
 
     return edges, parts
 
-def benchmark_random(*args):
+def benchmark_random(*args, prec_depth=5, algorithm='kpkc', first_only=False):
     G, parts = get_random_k_partite_graph(*args)
-    return _benchmark(G, parts)
+    return _benchmark(G, parts, prec_depth=prec_depth, algorithm=algorithm, first_only=first_only)
 
-def test_random(*args):
+def test_random(*args, prec_depth=5, algorithm='kpkc'):
     G, parts = get_random_k_partite_graph(*args)
-    it = KPartiteKClique_iter(G, parts)
-    a = sorted(list(it))
-    b = sorted([c for c in G.cliques_maximal() if len(c) == len(parts)])
-    assert a == b
+    from sage.graphs.all import Graph
+    G = Graph(G)
+    it = KPartiteKClique_iter(G, parts, prec_depth=prec_depth, algorithm=algorithm)
+    a = list(it)
+    a = sorted(sorted(x) for x in a)
+    b = sorted([sorted(c) for c in G.cliques_maximal() if len(c) == len(parts)])
+    assert a == b, (a,b)
     print(len(a))
 
-def benchmark_sample(G, prec_depth=5):
+def benchmark_sample(G, prec_depth=5, algorithm='kpkc', first_only=False):
     dic_parts = {v: v[0] for v in G.vertices()}
     values = set(dic_parts.values())
     parts = [[] for _ in values]
     for vertex in dic_parts:
         parts[dic_parts[vertex]].append(vertex)
 
-    return _benchmark(G, parts, prec_depth=prec_depth)
+    return _benchmark(G, parts, prec_depth=prec_depth, algorithm=algorithm, first_only=first_only)
 
-def _benchmark(*args, prec_depth=5):
-    it = KPartiteKClique_iter(*args, benchmark=True, prec_depth=prec_depth)
+def _benchmark(*args, prec_depth=5, algorithm='kpkc', first_only=False):
+    it = KPartiteKClique_iter(*args, benchmark=True, prec_depth=prec_depth, algorithm=algorithm)
     _ = next(it)
     a = time()
     try:
@@ -59,6 +62,8 @@ def _benchmark(*args, prec_depth=5):
         b = time()
         return b-a, b-a
     b = time()
+    if first_only:
+        return b-a
     sum(1 for _ in it)
     c = time()
     return b-a, c - a
