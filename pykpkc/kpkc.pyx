@@ -1,5 +1,4 @@
 from cysignals.signals cimport sig_on, sig_off
-from cysignals.memory cimport check_allocarray, check_reallocarray, check_calloc, sig_free
 
 from _kpkc_memory_allocator cimport MemoryAllocator
 
