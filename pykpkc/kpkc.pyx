@@ -6,6 +6,23 @@ from _kpkc_memory_allocator cimport MemoryAllocator
 def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark=False):
     """
     Iterates over all k-cliques
+
+    EXAMPLES::
+
+        >>> from kpkc import KPartiteKClique_iter
+        >>> list(KPartiteKClique_iter([[1,2]], parts=[[1], [2]]))
+        [[1, 2]]
+        >>> edges = [[i, (i+3) % 9] for i in range(9)] + [[i, ((i+4) % 9) if i % 3 != 2 else ((i+1) % 9)] for i in range(9)]
+        >>> list(KPartiteKClique_iter(edges, parts=[[0,1,2], [3,4,5], [6,7,8]]))
+        [[2, 5, 8], [0, 4, 8], [1, 4, 7], [2, 3, 7], [1, 5, 6], [0, 3, 6]]
+        >>> list(KPartiteKClique_iter(edges, parts=[[0,1,2], [3,4,5], [6,7,8]], algorithm='bitCLQ'))
+        [[0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
+
+    The option ``benchmark=True`` yields an empty list first,
+    to allow excluding the python overhead from benchmarking::
+
+        >>> list(KPartiteKClique_iter(edges, parts=[[0,1,2], [3,4,5], [6,7,8]], algorithm='bitCLQ', benchmark=True))
+        [[], [0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
     """
     cdef int i, j
     cdef MemoryAllocator mem = MemoryAllocator()
@@ -64,8 +81,8 @@ def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark
             incidences[ui][vi] = True
             incidences[vi][ui] = True
 
-
     if benchmark:
+        # We will yield here for benchmarking to allow ignoring the overhead of creating the C++ input.
         yield []
 
     cdef KPartiteKClique* K
