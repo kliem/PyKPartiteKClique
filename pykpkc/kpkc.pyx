@@ -6,6 +6,8 @@ def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark
     """
     Iterates over all k-cliques
 
+    INPUT:
+
     EXAMPLES::
 
         >>> from kpkc import KPartiteKClique_iter
@@ -22,13 +24,20 @@ def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark
 
         >>> list(KPartiteKClique_iter(edges, parts=[[0,1,2], [3,4,5], [6,7,8]], algorithm='bitCLQ', benchmark=True))
         [[], [0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
+
+    One may give parts as a list or tuple::
+
+        >>> list(KPartiteKClique_iter(edges, parts=((0,1,2), (3,4,5), (6,7,8)), algorithm='bitCLQ', benchmark=True))
+        [[], [0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
+
     """
     cdef int i, j
     cdef MemoryAllocator mem = MemoryAllocator()
-    assert isinstance(parts, list)  # We will allow more flexibility later.
+
+    assert isinstance(parts, (list, tuple)), "parts must be a tuple or list"
 
     cdef int k = len(parts)
-    cdef int* first_per_part = <int*> mem.allocarray(k, sizeof(int))
+    cdef int* first_per_part = <int*> mem.allocarray(k + 1, sizeof(int))
 
     cdef int counter = 0
     for i in range(k):
@@ -36,26 +45,19 @@ def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark
         counter += len(parts[i])
 
     cdef int n = counter
+    first_per_part[k] = n
 
-    cdef bool ** incidences = <bool **> mem.allocarray(n, sizeof(bool *))
+    cdef bool** incidences = <bool**> mem.allocarray(n, sizeof(bool*))
     for i in range(n):
-        incidences[i] = <bool *> mem.calloc(n, sizeof(bool))
+        incidences[i] = <bool*> mem.calloc(n, sizeof(bool))
 
-    def id_to_part(index):
-        for i in range(k):
-            if first_per_part[i] > index:
-                break
-        else:
-            i += 1
-        i -= 1
-        return i
-
-    cdef int* id_to_part_cached = <int*> mem.allocarray(n, sizeof(int))
-    for i in range(n):
-        id_to_part_cached[i] = id_to_part(i)
+    cdef int* id_to_part = <int*> mem.allocarray(n, sizeof(int))
+    for i in range(k):
+        for j in range(first_per_part[i], first_per_part[i+1]):
+            id_to_part[j] = i
 
     def id_to_vertex(index):
-        i = id_to_part_cached[index]
+        i = id_to_part[index]
         return parts[i][index - first_per_part[i]]
 
     cdef dict vertex_to_id = {id_to_vertex(i): i for i in range(n)}
@@ -64,24 +66,19 @@ def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark
 
     if hasattr(G, "edge_iterator"):
         # G is probably a SageMath graph.
-        for u, v in G.edge_iterator(sort_vertices=False, labels=False):
-            ui = vertex_to_id[u]
-            vi = vertex_to_id[v]
-            if id_to_part_cached[ui] == id_to_part_cached[vi]:
-                raise ValueError("not a k-partite graph")
-            incidences[ui][vi] = True
-            incidences[vi][ui] = True
-    else:
-        for u, v in G:
-            ui = vertex_to_id[u]
-            vi = vertex_to_id[v]
-            if id_to_part_cached[ui] == id_to_part_cached[vi]:
-                raise ValueError("not a k-partite graph")
-            incidences[ui][vi] = True
-            incidences[vi][ui] = True
+        G = G.edge_iterator(sort_vertices=False, labels=False)
+
+    for u, v in G:
+        ui = vertex_to_id[u]
+        vi = vertex_to_id[v]
+        if id_to_part[ui] == id_to_part[vi]:
+            raise ValueError("not a k-partite graph")
+        incidences[ui][vi] = True
+        incidences[vi][ui] = True
 
     if benchmark:
-        # We will yield here for benchmarking to allow ignoring the overhead of creating the C++ input.
+        # We will yield here.
+        # This allows ignoring the python overhead for benchmarking.
         yield []
 
     cdef KPartiteKClique* K
