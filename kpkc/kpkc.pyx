@@ -10,7 +10,7 @@ def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark
 
     EXAMPLES::
 
-        >>> from kpkc import KPartiteKClique_iter
+        >>> from kpkc.kpkc import KPartiteKClique_iter
         >>> list(KPartiteKClique_iter([[1,2]], parts=[[1], [2]]))
         [[1, 2]]
         >>> edges = [[i, (i+3) % 9] for i in range(9)] + [[i, ((i+4) % 9) if i % 3 != 2 else ((i+1) % 9)] for i in range(9)]

@@ -1,6 +1,6 @@
 from time import time
 from random import random, randint
-from kpkc import *
+from kpkc.kpkc import *
 
 def get_random_k_partite_graph(n_parts, min_part_size, max_part_size, dens1, dens2):
     r"""
