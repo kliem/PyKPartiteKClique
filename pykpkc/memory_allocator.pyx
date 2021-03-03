@@ -2,7 +2,6 @@
 
 from cysignals.memory cimport *
 
-
 cdef class MemoryAllocator:
     r"""
     An object for memory allocation, whose resources are freed upon

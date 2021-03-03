@@ -1,6 +1,6 @@
 from cysignals.signals cimport sig_on, sig_off
 
-from _kpkc_memory_allocator cimport MemoryAllocator
+from .memory_allocator cimport MemoryAllocator
 
 def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark=False):
     """
