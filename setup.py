@@ -9,7 +9,7 @@ import sys
 
 class build_py(setuptools_build_py):
     def run(self):
-#        self.distribution.package_data['pykpkc'] += ['memory_allocator.pxd', 'pykpkc.pxd']
+#        self.distribution.package_data['kpkc'] += ['memory_allocator.pxd', 'kpkc.pxd']
         setuptools_build_py.run(self)
 
 class build_ext(du_build_ext):
@@ -17,7 +17,7 @@ class build_ext(du_build_ext):
         from Cython.Build.Dependencies import cythonize
         self.distribution.ext_modules[:] = cythonize(
         self.distribution.ext_modules,
-#        include_path=['pykpkc'] + sys.path,
+#        include_path=['kpkc'] + sys.path,
         build_dir="build",
         include_path=['build', ''] + sys.path,
         compiler_directives={'embedsignature': True},
@@ -63,15 +63,15 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 extensions = [
     Extension(
-        "pykpkc.pykpkc",
-        sources=["pykpkc/pykpkc.pyx", "pykpkc/KPartiteKClique/kpkc.cpp"],
+        "kpkc.kpkc",
+        sources=["kpkc/kpkc.pyx", "kpkc/KPartiteKClique/kpkc.cpp"],
         language="c++",
-        include_dirs=["pykpkc/KPartiteKClique"],
+        include_dirs=["kpkc/KPartiteKClique"],
         extra_compile_args=["-std=c++11"]),
-#        depends=["KPartiteKClique/kpkc.h", "pykpkc/pykpkc.pxd"]),
+#        depends=["KPartiteKClique/kpkc.h", "kpkc/kpkc.pxd"]),
     Extension(
-        "pykpkc.memory_allocator",
-        sources=["pykpkc/memory_allocator.pyx"],
+        "kpkc.memory_allocator",
+        sources=["kpkc/memory_allocator.pyx"],
         language="c++",
         extra_compile_args=["-std=c++11"],
 #        include_dirs=[os.path.dirname(__file__) or "."],
@@ -80,7 +80,7 @@ extensions = [
 ]
 
 setup(
-    name='pykpkc',
+    name='kpkc',
     version='0.1.0',
     description='A python interface to the KPartiteKClique',
     long_description=long_description,
@@ -90,13 +90,13 @@ setup(
     author_email='jonathan.kliem@gmail.com',
     license='GPLv3',
     packages=find_packages(),
-    ext_modules=cythonize(extensions),
+    ext_modules=cythonize(extensions, language_level=3),
     zip_safe=False,
     python_requires='>=3.6',
-    package_dir = {'pykpkc': 'pykpkc'},
+    package_dir = {'kpkc': 'kpkc'},
     install_requires=["cysignals", "Cython"],
-#    include_dirs=["pykpkc" ,"KPartiteKClique"] + sys.path,
-    package_data={"pykpkc": ["*.pxd", "*.h", "KPartiteKClique/*"]},
+#    include_dirs=["kpkc" ,"KPartiteKClique"] + sys.path,
+    package_data={"kpkc": ["*.pxd", "*.h", "KPartiteKClique/*"]},
     #cmdclass = {'build': build},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
