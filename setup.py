@@ -3,6 +3,7 @@ from setuptools.extension import Extension
 from setuptools.command.build_py import build_py as setuptools_build_py
 from distutils.command.build_ext import build_ext as du_build_ext
 from distutils.command.build import build as _build
+from Cython.Build.Dependencies import cythonize
 import os
 import sys
 
@@ -65,7 +66,7 @@ extensions = [
         "pykpkc.pykpkc",
         sources=["pykpkc/pykpkc.pyx", "pykpkc/KPartiteKClique/kpkc.cpp"],
         language="c++",
-#        include_dirs=["KPartiteKClique"],
+        include_dirs=["pykpkc/KPartiteKClique"],
         extra_compile_args=["-std=c++11"]),
 #        depends=["KPartiteKClique/kpkc.h", "pykpkc/pykpkc.pxd"]),
     Extension(
@@ -88,17 +89,15 @@ setup(
     author='Jonathan Kliem',
     author_email='jonathan.kliem@gmail.com',
     license='GPLv3',
-    packages=['pykpkc'],
-    py_modules = ['pykpkc', 'pykpkc.pykpkc', 'pykpkc.memory_allocator'],
-#    packages=find_packages(),
-    ext_modules=extensions,
-#    zip_safe=False,
+    packages=find_packages(),
+    ext_modules=cythonize(extensions),
+    zip_safe=False,
     python_requires='>=3.6',
     package_dir = {'pykpkc': 'pykpkc'},
     install_requires=["cysignals", "Cython"],
-    include_dirs=["pykpkc" ,"KPartiteKClique"] + sys.path,
+#    include_dirs=["pykpkc" ,"KPartiteKClique"] + sys.path,
     package_data={"pykpkc": ["*.pxd", "*.h", "KPartiteKClique/*"]},
-    cmdclass = {'build': build},
+    #cmdclass = {'build': build},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Science/Research',
