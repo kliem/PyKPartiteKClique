@@ -1,6 +1,8 @@
+# distutils: include_dirs = KPartiteKClique
+# distutils: language = c++
 from libcpp cimport bool
 
-cdef extern from "kpkc.h":
+cdef extern from "KPartiteKClique/kpkc.h":
     cdef cppclass KPartiteKClique:
         KPartiteKClique(bool **, int n_vertices, int* first_per_part, int k)
         KPartiteKClique(bool **, int n_vertices, int* first_per_part, int k, int prec_depth)

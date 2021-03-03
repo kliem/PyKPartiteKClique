@@ -2,12 +2,13 @@ from setuptools import setup, find_packages
 from setuptools.extension import Extension
 from setuptools.command.build_py import build_py as setuptools_build_py
 from distutils.command.build_ext import build_ext as du_build_ext
+from distutils.command.build import build as _build
 import os
 import sys
 
 class build_py(setuptools_build_py):
     def run(self):
-        self.distribution.package_data['pykpkc'] += ['memory_allocator.pxd', 'pykpkc.pxd']
+#        self.distribution.package_data['pykpkc'] += ['memory_allocator.pxd', 'pykpkc.pxd']
         setuptools_build_py.run(self)
 
 class build_ext(du_build_ext):
@@ -15,26 +16,64 @@ class build_ext(du_build_ext):
         from Cython.Build.Dependencies import cythonize
         self.distribution.ext_modules[:] = cythonize(
         self.distribution.ext_modules,
+#        include_path=['pykpkc'] + sys.path,
+        build_dir="build",
+        include_path=['build', ''] + sys.path,
+        compiler_directives={'embedsignature': True},
         language_level=3)
         du_build_ext.run(self)
+
+from glob import glob
+
+opj = os.path.join
+
+
+cythonize_dir = "build"
+
+# Run Distutils
+class build(_build):
+    def run(self):
+        """
+        Run Cython first.
+        """
+        dist = self.distribution
+        ext_modules = dist.ext_modules
+        if ext_modules:
+            dist.ext_modules[:] = self.cythonize(ext_modules)
+
+        _build.run(self)
+
+    def cythonize(self, extensions):
+        # Run Cython with -Werror on continuous integration services
+        # with Python 3.6 or later
+        if "CI" in os.environ and sys.version_info >= (3, 6):
+            from Cython.Compiler import Options
+            Options.warning_errors = True
+
+        from Cython.Build.Dependencies import cythonize
+        return cythonize(extensions,
+                build_dir=cythonize_dir,
+                include_path=["", cythonize_dir],
+                compiler_directives=dict(binding=True, language_level=2))
+
 
 with open("README.md", "r", encoding="utf-8") as fh:
         long_description = fh.read()
 
 extensions = [
-#    Extension(
-#        "kpkc.kpkc",
-#        sources=["kpkc/kpkc.pyx", "KPartiteKClique/kpkc.cpp"],
-#        language="c++",
+    Extension(
+        "pykpkc.pykpkc",
+        sources=["pykpkc/pykpkc.pyx", "pykpkc/KPartiteKClique/kpkc.cpp"],
+        language="c++",
 #        include_dirs=["KPartiteKClique"],
-#        extra_compile_args=["-std=c++11"],
-#        depends=["KPartiteKClique/kpkc.h", "kpkc/kpkc.pxd"]),
+        extra_compile_args=["-std=c++11"]),
+#        depends=["KPartiteKClique/kpkc.h", "pykpkc/pykpkc.pxd"]),
     Extension(
         "pykpkc.memory_allocator",
         sources=["pykpkc/memory_allocator.pyx"],
         language="c++",
         extra_compile_args=["-std=c++11"],
-        include_dirs=[os.path.dirname(__file__) or "."],
+#        include_dirs=[os.path.dirname(__file__) or "."],
 #        depends=["memory_allocator.pxd"]
         )
 ]
@@ -50,16 +89,16 @@ setup(
     author_email='jonathan.kliem@gmail.com',
     license='GPLv3',
     packages=['pykpkc'],
-    #packages=find_packages(),
+    py_modules = ['pykpkc', 'pykpkc.pykpkc', 'pykpkc.memory_allocator'],
+#    packages=find_packages(),
     ext_modules=extensions,
 #    zip_safe=False,
     python_requires='>=3.6',
     package_dir = {'pykpkc': 'pykpkc'},
     install_requires=["cysignals", "Cython"],
-    include_dirs=[os.path.dirname(__file__) or "." ,"KPartiteKClique"] + sys.path,
-    package_data={"pykpkc": ["*.pxd", "*.h"]},
-    cmdclass = {'build_py': build_py,
-                'build_ext': build_ext},
+    include_dirs=["pykpkc" ,"KPartiteKClique"] + sys.path,
+    package_data={"pykpkc": ["*.pxd", "*.h", "KPartiteKClique/*"]},
+    cmdclass = {'build': build},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Science/Research',

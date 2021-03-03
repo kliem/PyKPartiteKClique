@@ -1,3 +1,4 @@
+# cython: preliminary_late_includes_cy28=True
 # Copied from SageMath "src/sage/ext/memory_allocator.pyx"
 
 from cysignals.memory cimport *
