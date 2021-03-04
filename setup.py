@@ -65,10 +65,7 @@ extensions = [
     Extension(
         "kpkc.kpkc",
         sources=["kpkc/kpkc.pyx", "kpkc/KPartiteKClique/kpkc.cpp"],
-        language="c++",
-        include_dirs=["kpkc/KPartiteKClique"],
-        extra_compile_args=["-std=c++11"]),
-#        depends=["KPartiteKClique/kpkc.h", "kpkc/kpkc.pxd"]),
+        language="c++"),
     Extension(
         "kpkc.memory_allocator",
         sources=["kpkc/memory_allocator.pyx"],
@@ -96,7 +93,7 @@ setup(
     package_dir = {'kpkc': 'kpkc'},
     install_requires=["cysignals", "Cython"],
 #    include_dirs=["kpkc" ,"KPartiteKClique"] + sys.path,
-    package_data={"kpkc": ["*.pxd", "*.h", "KPartiteKClique/*"]},
+    package_data={"kpkc": ["*.pxd", "*.h", "KPartiteKClique/*.h", "KPartiteKClique/*.cpp"]},
     #cmdclass = {'build': build},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
