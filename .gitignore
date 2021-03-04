@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Cythonzied files
+kpkc/kpkc.cpp
+kpkc/memory_allocator.cpp
