@@ -1,3 +1,3 @@
-[submodule "KPartiteKClique"]
-	path = kpkc/KPartiteKClique
+[submodule "kpkc/cppkpkc"]
+	path = kpkc/cppkpkc
 	url = git@github.com:kliem/KPartiteKClique.git

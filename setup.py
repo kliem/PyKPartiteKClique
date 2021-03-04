@@ -64,7 +64,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 extensions = [
     Extension(
         "kpkc.kpkc",
-        sources=["kpkc/kpkc.pyx", "kpkc/KPartiteKClique/kpkc.cpp"],
+        sources=["kpkc/kpkc.pyx"],#, "kpkc/cppkpkc/kpkc.cpp"],
         language="c++"),
     Extension(
         "kpkc.memory_allocator",
@@ -79,10 +79,10 @@ extensions = [
 setup(
     name='kpkc',
     version='0.1.0',
-    description='A python interface to the KPartiteKClique',
+    description='A python interface to the cppkpkc',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/kliem/PyKPartiteKClique',
+    url='https://github.com/kliem/Pycppkpkc',
     author='Jonathan Kliem',
     author_email='jonathan.kliem@gmail.com',
     license='GPLv3',
@@ -92,8 +92,8 @@ setup(
     python_requires='>=3.6',
     package_dir = {'kpkc': 'kpkc'},
     install_requires=["cysignals", "Cython"],
-#    include_dirs=["kpkc" ,"KPartiteKClique"] + sys.path,
-    package_data={"kpkc": ["*.pxd", "*.h", "KPartiteKClique/*.h", "KPartiteKClique/*.cpp"]},
+#    include_dirs=["kpkc" ,"cppkpkc"] + sys.path,
+    package_data={"kpkc": ["*.pxd", "*.h", "cppkpkc/*.h", "cppkpkc/*.cpp"]},
     #cmdclass = {'build': build},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',

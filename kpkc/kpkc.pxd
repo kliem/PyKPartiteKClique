@@ -1,10 +1,9 @@
-# distutils: include_dirs = kpkc/KPartiteKClique
+# distutils: include_dirs = kpkc/cppkpkc
 # distutils: language = c++
 # distutils: extra_compile_args= -std=c++11
-# distutils: sources = kpkc.pyx kpkc/KPartiteKClique/kpkc.cpp
 from libcpp cimport bool
 
-cdef extern from "KPartiteKClique/kpkc.h":
+cdef extern from "cppkpkc/kpkc.cpp":
     cdef cppclass KPartiteKClique:
         KPartiteKClique(bool **, int n_vertices, int* first_per_part, int k)
         KPartiteKClique(bool **, int n_vertices, int* first_per_part, int k, int prec_depth)
