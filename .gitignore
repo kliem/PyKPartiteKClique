@@ -131,3 +131,4 @@ dmypy.json
 # Cythonzied files
 kpkc/kpkc.cpp
 kpkc/memory_allocator.cpp
+kpkc/cysignals.cpp
