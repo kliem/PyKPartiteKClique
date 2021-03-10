@@ -1,5 +1,5 @@
 # Much taken from SageMath.
-name: cysignals on cygwin
+name: kpkc with cysignals on cygwin
 
 on:
   pull_request:
