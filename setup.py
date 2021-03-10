@@ -43,10 +43,10 @@ setup(
     ext_modules=extensions,
     zip_safe=False,
     python_requires='>=3.6',
-    package_dir = {'kpkc':'kpkc'},
+    package_dir={'kpkc': 'kpkc'},
     install_requires=["Cython"],
     package_data={"kpkc": ["*.pxd", "*.h", "cppkpkc/*.h", "cppkpkc/*.cpp"]},
-    cmdclass = {'build_ext':build_ext},
+    cmdclass={'build_ext': build_ext},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Science/Research',
