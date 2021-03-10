@@ -24,7 +24,11 @@ jobs:
         - run: |
             git config --global core.autocrlf false
             git config --global core.symlinks true
-        - uses: actions/checkout@v1
+        - name: Set up the repository
+          uses: actions/checkout@v2
+          with:
+              submodules: recursive
+              fetch-depth: 0
         - name: install cygwin and minimal prerequisites with choco
           shell: bash {0}
           run: |
