@@ -1,6 +1,6 @@
 # Copied from SageMath "src/sage/ext/memory_allocator.pyx"
 
-from cysignals.memory cimport *
+from .cysignals cimport *
 
 cdef class MemoryAllocator:
     r"""

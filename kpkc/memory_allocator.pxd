@@ -1,4 +1,5 @@
-# Copied from SageMath "src/sage/ext/memory_allocator.pxd"
+# distutils: language = c++
+# distutils: extra_compile_args= -std=c++11
 
 cimport cython
 from libc.stdint cimport uintptr_t
