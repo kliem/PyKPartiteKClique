@@ -1,0 +1,43 @@
+# Much taken from SageMath.
+name: cysignals on cygwin
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    tags:
+      - '*'
+
+env:
+  MAKE: make -j8
+  CYGWIN: winsymlinks:native
+
+jobs:
+    build:
+        runs-on: windows-latest
+
+        strategy:
+          fail-fast: false
+          matrix:
+            python-version: [6, 7, 8, 9]
+        steps:
+        - run: |
+            git config --global core.autocrlf false
+            git config --global core.symlinks true
+        - uses: actions/checkout@v1
+        - name: install cygwin and minimal prerequisites with choco
+          shell: bash {0}
+          run: |
+            choco --version
+            choco install make autoconf gcc-core gcc-g++ python3${{ matrix.python-version }}-devel --source cygwin
+        - name: install dependencies
+          run: |
+            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-verions }} -m pip install setuptools Cython Sphinx flake8'
+        - name: install
+          run: |
+            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-verions }} setup.py build_ext -i'
+        - name: test
+          run: |
+            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-verions }} test.py'
+            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-verions }} -c "import cydoctest, kpkc.kpkc; cydoctest.testmod(kpkc.kpkc)" -v'
+
