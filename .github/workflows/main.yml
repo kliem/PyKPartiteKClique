@@ -34,7 +34,7 @@ jobs:
           if: runner.os != 'Windows'
           run: |
               pip install cysignals
-        - name: Freeze pip:
+        - name: Freeze pip
           run: |
               pip freeze
         - name: Local build
