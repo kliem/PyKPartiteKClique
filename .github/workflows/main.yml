@@ -41,5 +41,4 @@ jobs:
           run: |
             python setup.py build_ext -i
             python test.py
-            python -c "import cydoctest, kpkc.kpkc; cydoctest.testmod(kpkc.kpkc)" -v
             git clean -xfd

@@ -1,5 +1,9 @@
 from kpkc.test import get_random_k_partite_graph
 from random import random, randint
+import cydoctest
+import kpkc.kpkc
+
+cydoctest.testmod(kpkc.kpkc, verbose=True)
 
 for i in range(2, 7):
     min_part_size = randint(5, 20-2*i)
