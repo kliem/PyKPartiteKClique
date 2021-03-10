@@ -2,19 +2,22 @@ from setuptools import setup, find_packages
 from setuptools.extension import Extension
 from distutils.command.build_ext import build_ext as du_build_ext
 
+
 class build_ext(du_build_ext):
     def run(self):
         from Cython.Build.Dependencies import cythonize
         self.distribution.ext_modules[:] = cythonize(
-        self.distribution.ext_modules,
-        language_level=3)
+            self.distribution.ext_modules,
+            language_level=3)
         du_build_ext.run(self)
 
+
 with open("README.md", "r", encoding="utf-8") as fh:
-        long_description = fh.read()
+    long_description = fh.read()
 
 try:
-    import cysignals
+    from cysignals.tests import test_sig_check
+    _ = test_sig_check()
     has_cysignals = True
 except ModuleNotFoundError:
     has_cysignals = False
@@ -40,10 +43,10 @@ setup(
     ext_modules=extensions,
     zip_safe=False,
     python_requires='>=3.6',
-    package_dir = {'kpkc': 'kpkc'},
+    package_dir = {'kpkc':'kpkc'},
     install_requires=["Cython"],
     package_data={"kpkc": ["*.pxd", "*.h", "cppkpkc/*.h", "cppkpkc/*.cpp"]},
-    cmdclass = {'build_ext': build_ext},
+    cmdclass = {'build_ext':build_ext},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Science/Research',
