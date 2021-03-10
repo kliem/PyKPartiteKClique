@@ -32,12 +32,12 @@ jobs:
             choco install make autoconf gcc-core gcc-g++ python3${{ matrix.python-version }}-devel --source cygwin
         - name: install dependencies
           run: |
-            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-verions }} -m pip install setuptools Cython Sphinx flake8'
+            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-version }} -m pip install setuptools Cython Sphinx flake8'
         - name: install
           run: |
-            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-verions }} setup.py build_ext -i'
+            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-version }} setup.py build_ext -i'
         - name: test
           run: |
-            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-verions }} test.py'
-            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-verions }} -c "import cydoctest, kpkc.kpkc; cydoctest.testmod(kpkc.kpkc)" -v'
+            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-version }} test.py'
+            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-version }} -c "import cydoctest, kpkc.kpkc; cydoctest.testmod(kpkc.kpkc)" -v'
 
