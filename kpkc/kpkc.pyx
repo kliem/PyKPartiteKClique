@@ -14,8 +14,12 @@ def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark
         >>> list(KPartiteKClique_iter([[1,2]], parts=[[1], [2]]))
         [[1, 2]]
         >>> edges = [[i, (i+3) % 9] for i in range(9)] + [[i, ((i+4) % 9) if i % 3 != 2 else ((i+1) % 9)] for i in range(9)]
-        >>> list(KPartiteKClique_iter(edges, parts=[[0,1,2], [3,4,5], [6,7,8]]))
-        [[2, 5, 8], [0, 4, 8], [1, 4, 7], [2, 3, 7], [1, 5, 6], [0, 3, 6]]
+        >>> output = list(KPartiteKClique_iter(edges, parts=[[0,1,2], [3,4,5], [6,7,8]]))
+        >>> from sys import platform
+        >>> platform == "darwin" or output == [[2, 5, 8], [0, 4, 8], [1, 4, 7], [2, 3, 7], [1, 5, 6], [0, 3, 6]]  # output not on mac
+        True
+        >>> platform != "darwin" or output == [[0, 4, 8], [2, 5, 8], [1, 4, 7], [2, 3, 7], [0, 3, 6], [1, 5, 6]]  # output on mac
+        True
         >>> list(KPartiteKClique_iter(edges, parts=[[0,1,2], [3,4,5], [6,7,8]], algorithm='bitCLQ'))
         [[0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
 
