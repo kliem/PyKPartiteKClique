@@ -37,12 +37,14 @@ class kpkcTester:
     def __repr__(self):
         return "class to test kpkc"
 
-    def benchmark(self, algorithm='kpkc', prec_depth=5, first_only=True):
+    def benchmark(self, algorithm='kpkc', prec_depth=5, first_only=False):
         from time import time
         if algorithm == 'kpkc':
             it = self.kpkc(prec_depth=prec_depth, benchmark=True)
-        else:
+        elif algorithm == 'bitCLQ':
             it = self.bitCLQ(benchmark=True)
+        else:
+            it = self.networkx(benchmark=True)
 
         # Construct the cpp-class.
         _ = next(it)
@@ -68,9 +70,11 @@ class kpkcTester:
         it = KPartiteKClique_iter(self.edges, self.parts, benchmark=benchmark, algorithm='bitCLQ')
         return it
 
-    def networkx(self):
+    def networkx(self, benchmark=False):
         import networkx
         G = networkx.graph.Graph(self.edges)
+        if benchmark:
+            yield None
         return (i for i in networkx.find_cliques(G) if len(i) == len(self.parts))
 
     def check(self):
