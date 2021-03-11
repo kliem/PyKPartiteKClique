@@ -1,0 +1,11 @@
+0.gz filter=lfs diff=lfs merge=lfs -text
+1000.gz filter=lfs diff=lfs merge=lfs -text
+1.gz filter=lfs diff=lfs merge=lfs -text
+2000000.gz filter=lfs diff=lfs merge=lfs -text
+20.gz filter=lfs diff=lfs merge=lfs -text
+2.gz filter=lfs diff=lfs merge=lfs -text
+5000000.gz filter=lfs diff=lfs merge=lfs -text
+10000000.gz filter=lfs diff=lfs merge=lfs -text
+1000000.gz filter=lfs diff=lfs merge=lfs -text
+10000.gz filter=lfs diff=lfs merge=lfs -text
+100.gz filter=lfs diff=lfs merge=lfs -text
