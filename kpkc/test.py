@@ -1,6 +1,7 @@
 from random import random, randint
 from .kpkc import KPartiteKClique_iter
 
+
 def get_random_k_partite_graph(n_parts, min_part_size, max_part_size, dens1, dens2):
     r"""
     Randomly generated k-partite graphs according to Grünert et al.
@@ -26,6 +27,7 @@ def get_random_k_partite_graph(n_parts, min_part_size, max_part_size, dens1, den
                         edges.append([i, i1])
 
     return kpkcTester(edges, parts)
+
 
 class kpkcTester:
     def __init__(self, edges, parts):
@@ -73,6 +75,7 @@ class kpkcTester:
 
     def check(self):
         T = set(tuple(sorted(c)) for c in self.networkx())
+
         def test(it):
             T1 = set(tuple(sorted(c)) for c in it)
             assert T == T1
@@ -89,6 +92,7 @@ class kpkcTester:
         data = {'edges': self.edges, 'parts': self.parts}
         with gzip.open(filename, 'w') as fout:
             fout.write(json.dumps(data).encode('utf-8'))
+
 
 def load_tester(filename):
     import gzip
@@ -111,6 +115,7 @@ def load_tester(filename):
     edges = [fix_edge_or_part(edge) for edge in data['edges']]
 
     return kpkcTester(edges, parts)
+
 
 def sage_graph_to_tester(G):
     dic_parts = {v: v[0] for v in G.vertices()}
