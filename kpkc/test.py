@@ -54,6 +54,8 @@ class kpkcTester:
             _ = next(it)
         except StopIteration:
             b = time()
+            if first_only:
+                return b-a
             return b-a, b-a
         b = time()
         if first_only:
@@ -75,7 +77,7 @@ class kpkcTester:
         G = networkx.graph.Graph(self.edges)
         if benchmark:
             yield None
-        return (i for i in networkx.find_cliques(G) if len(i) == len(self.parts))
+        yield from (i for i in networkx.find_cliques(G) if len(i) == len(self.parts))
 
     def check(self):
         T = set(tuple(sorted(c)) for c in self.networkx())
