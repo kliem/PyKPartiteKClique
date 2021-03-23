@@ -16,7 +16,7 @@ jobs:
             matrix:
                 os: [ubuntu-latest, macos-latest]
                 python-version: [3.6, 3.7, 3.8, 3.9]
-                debug: [true, false]
+                flags: [-mpopcnt -mbmi -UNDEBUG, -mpopcnt -mbmi]
                 include:
                     - os: windows-latest
                       python-version: 3.6
@@ -26,6 +26,8 @@ jobs:
                       python-version: 3.8
                     - os: windows-latest
                       python-version: 3.9
+        env:
+            CFLAGS: ${{ matrix.flags }}
         steps:
         - name: Set up the repository
           uses: actions/checkout@v2
@@ -47,14 +49,6 @@ jobs:
         - name: Freeze pip
           run: |
               pip freeze
-        - if: ${{ matrix.debug }} == 'true' && runner.os != 'Windows'
-          name: setting flags (debug)
-          run: |
-              export CFLAGS="-mpopcnt -mbmi -UNDEBUG"
-        - if: ${{ matrix.debug }} != 'true' && runner.os != 'Windows'
-          name: setting flags (no debug)
-          run: |
-              export CFLAGS="-mpopcnt -mbmi -O3"
         - name: Local build
           run: |
             python setup.py build_ext -i
