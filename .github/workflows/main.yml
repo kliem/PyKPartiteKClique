@@ -23,6 +23,7 @@ jobs:
                       march: -march=native
                     - os: ubuntu-latest
                       march: ' '
+                      flags: ' '
                     - os: windows-latest
                       march: -march=native
                     - os: windows-latest
