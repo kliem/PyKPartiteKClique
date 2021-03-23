@@ -54,7 +54,7 @@ jobs:
         - if: ($${{ matrix.debu }} != 'true') && (runner.os != 'Windows')
           name: setting flags (no debug)
           run: |
-              export CFLAGS="-mpopcnt -mbmi"
+              export CFLAGS="-mpopcnt -mbmi -O3"
         - name: Local build
           run: |
             python setup.py build_ext -i
