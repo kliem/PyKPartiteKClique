@@ -14,22 +14,19 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: [ubuntu-latest, macos-latest]
+                os: [ubuntu-latest, macos-latest, windows-latest]
                 python-version: [3.6, 3.7, 3.8, 3.9]
                 flags: [-UNDEBUG, ' ']
                 march: [-march=native, ' ']
-                include:
-                    - os: windows-latest
-                      python-version: 3.6
-                    - os: windows-latest
-                      python-version: 3.7
-                    - os: windows-latest
-                      python-version: 3.8
-                    - os: windows-latest
-                      python-version: 3.9
                 exclude:
                     - os: macos-latest
                       march: -march=native
+                    - os: ubuntu-latest
+                      march: ' '
+                    - os: windows-latest
+                      march: -march=native
+                    - os: windows-latest
+                      flags: -UNDEBUG
         env:
             CFLAGS: ${{ matrix.flags }}-${{ matrix.march }}
         steps:
