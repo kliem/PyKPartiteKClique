@@ -121,7 +121,10 @@ cdef class KPartiteKClique_wrapper(KCliqueIterator_base):
         del self.K
 
     def __next__(self):
-        if self.K.next():
+        sig_on()
+        cdef bool has_next = self.K.next()
+        sig_off
+        if has_next:
             self.k_clique = self.K.k_clique()
             return self.make_k_clique()
         else:
@@ -168,7 +171,10 @@ cdef class bitCLQ_wrapper(KCliqueIterator_base):
         del self.K
 
     def __next__(self):
-        if self.K.next():
+        sig_on()
+        cdef bool has_next = self.K.next()
+        sig_off
+        if has_next:
             self.k_clique = self.K.k_clique()
             return self.make_k_clique()
         else:
