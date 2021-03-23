@@ -1,5 +1,5 @@
 from random import random, randint
-from .kpkc import KPartiteKClique_iter
+from .kpkc import KCliqueIterator
 
 
 def get_random_k_partite_graph(n_parts, min_part_size, max_part_size, dens1, dens2):
@@ -40,14 +40,12 @@ class kpkcTester:
     def benchmark(self, algorithm='kpkc', prec_depth=5, first_only=False):
         from time import time
         if algorithm == 'kpkc':
-            it = self.kpkc(prec_depth=prec_depth, benchmark=True)
+            it = self.kpkc(prec_depth=prec_depth)
         elif algorithm == 'bitCLQ':
-            it = self.bitCLQ(benchmark=True)
+            it = self.bitCLQ()
         else:
             it = self.networkx(benchmark=True)
-
-        # Construct the cpp-class.
-        _ = next(it)
+            _ = next(it)
 
         a = time()
         try:
@@ -64,12 +62,12 @@ class kpkcTester:
         c = time()
         return b-a, c - a
 
-    def kpkc(self, prec_depth=5, benchmark=False):
-        it = KPartiteKClique_iter(self.edges, self.parts, benchmark=benchmark, prec_depth=prec_depth, algorithm='kpkc')
+    def kpkc(self, prec_depth=5):
+        it = KCliqueIterator(self.edges, self.parts, prec_depth=prec_depth, algorithm='kpkc')
         return it
 
-    def bitCLQ(self, benchmark=False):
-        it = KPartiteKClique_iter(self.edges, self.parts, benchmark=benchmark, algorithm='bitCLQ')
+    def bitCLQ(self):
+        it = KCliqueIterator(self.edges, self.parts, algorithm='bitCLQ')
         return it
 
     def networkx(self, benchmark=False):

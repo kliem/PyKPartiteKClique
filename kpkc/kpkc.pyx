@@ -2,120 +2,213 @@ from .cysignals cimport sig_on, sig_off
 
 from .memory_allocator cimport MemoryAllocator
 
-def KPartiteKClique_iter(G, parts, int prec_depth=5, algorithm='kpkc', benchmark=False):
+cdef class KCliqueIterator_base:
     """
-    Iterates over all k-cliques
-
-    INPUT:
+    A base class to iterate over all k-clique
 
     EXAMPLES::
 
-        >>> from kpkc.kpkc import KPartiteKClique_iter
-        >>> list(KPartiteKClique_iter([[1,2]], parts=[[1], [2]]))
+    >>> from kpkc.kpkc import KCliqueIterator_base
+    >>> KCliqueIterator_base([[1, 2]], [[1], [2]])
+    An iterator over all 2-cliques of a 2-partite graph with 2 vertices
+
+    .. SEEALSO::
+
+        :class:`KPartiteKClique_wrapper`
+        :class:`bitCLQ_wrapper`
+    """
+    cdef MemoryAllocator mem
+    cdef bool **incidences
+    cdef int* first_per_part
+    cdef int* id_to_part
+    cdef int k
+    cdef int n
+    cdef dict vertex_to_id
+    cdef dict id_to_vertex
+    cdef const int* k_clique
+
+    def __init__(self, G, parts):
+        cdef int i, j
+        self.mem = MemoryAllocator()
+        assert isinstance(parts, (list, tuple)), "parts must be a tuple or list"
+
+        self.k = len(parts)
+        cdef int k = self.k
+        self.first_per_part = <int*> self.mem.allocarray(k + 1, sizeof(int))
+        cdef int* first_per_part = self.first_per_part
+
+        cdef int counter = 0
+        for i in range(k):
+            first_per_part[i] = counter
+            counter += len(parts[i])
+
+        self.n = counter
+        cdef int n = self.n
+        first_per_part[k] = n
+
+        self.incidences = <bool**> self.mem.allocarray(n, sizeof(bool*))
+        cdef bool** incidences = self.incidences
+        for i in range(n):
+            self.incidences[i] = <bool*> self.mem.calloc(n, sizeof(bool))
+
+        self.id_to_part = <int*> self.mem.allocarray(n, sizeof(int))
+        cdef int* id_to_part = self.id_to_part
+        for i in range(k):
+            for j in range(first_per_part[i], first_per_part[i+1]):
+                id_to_part[j] = i
+
+        def id_to_vertex(index):
+            i = id_to_part[index]
+            return parts[i][index - first_per_part[i]]
+
+        self.id_to_vertex = {i: id_to_vertex(i) for i in range(n)}
+
+        self.vertex_to_id = {self.id_to_vertex[i]: i for i in range(n)}
+
+        cdef int ui, vi
+
+        if hasattr(G, "edge_iterator"):
+            # G is probably a SageMath graph.
+            G = G.edge_iterator(sort_vertices=False, labels=False)
+
+        for u, v in G:
+            ui = self.vertex_to_id[u]
+            vi = self.vertex_to_id[v]
+            if id_to_part[ui] == id_to_part[vi]:
+                raise ValueError("not a k-partite graph")
+            incidences[ui][vi] = True
+            incidences[vi][ui] = True
+
+    cdef inline list make_k_clique(self):
+        cdef int i
+        return [self.id_to_vertex[self.k_clique[i]] for i in range(self.k)]
+
+    def __iter__(self):
+        return self
+
+    def __repr__(self):
+        return "An iterator over all {}-cliques of a {}-partite graph with {} vertices".format(self.k, self.k, self.n)
+
+cdef class KPartiteKClique_wrapper(KCliqueIterator_base):
+    """
+    Iterate over all k-cliques of a graph using the algorithm ``'kpkc'``.
+
+    This is a depth-first branch and bound algorithm, which picks first
+    the vertex with the least edges.
+
+    INPUT:
+
+    - ``G`` -- edges of a k-partite graph
+    - ``parts`` -- a list of parts of the graph; each graph has list of nodes
+    - ``prec_depth`` -- (default: ``5``); to which depth the pivot shall be precicely determined
+
+    EXAMPLES::
+
+        >>> from kpkc.kpkc import KPartiteKClique_wrapper
+        >>> it = KPartiteKClique_wrapper([[1, 3], [2, 3], [1, 4], [2, 4], [1, 5], [2, 6]], [[1, 2], [3, 4, 5, 6]])
+        >>> next(it)
+        [2, 6]
+        >>> next(it)
+        [1, 5]
+    """
+    cdef KPartiteKClique* K
+
+    def __init__(self, G, parts, int prec_depth=5):
+        KCliqueIterator_base.__init__(self, G, parts)
+        self.K = new KPartiteKClique(self.incidences, self.n, self.first_per_part, self.k, prec_depth)
+
+    def __dealloc__(self):
+        del self.K
+
+    def __next__(self):
+        if self.K.next():
+            self.k_clique = self.K.k_clique()
+            return self.make_k_clique()
+        else:
+            raise StopIteration
+
+cdef class bitCLQ_wrapper(KCliqueIterator_base):
+    """
+    Iterate over all k-cliques of a graph using the algorithm ``'kpkc'``.
+
+    This is a depth-first branch and bound algorithm, which picks first
+    the part with the least nodes.
+
+    INPUT:
+
+    - ``G`` -- edges of a k-partite graph
+    - ``parts`` -- a list of parts of the graph; each graph has list of nodes
+    - ``prec_depth`` -- ignored
+
+    EXAMPLES::
+
+        >>> from kpkc.kpkc import bitCLQ_wrapper
+        >>> it = bitCLQ_wrapper([[1, 3], [2, 3], [1, 4], [2, 4], [1, 5], [2, 6]], [[1, 2], [3, 4, 5, 6]])
+        >>> it = bitCLQ_wrapper([[1, 3], [2, 3], [1, 4], [2, 4], [1, 5], [2, 6]], [[1, 2], [3, 4, 5, 6]])
+        >>> next(it)
+        [1, 3]
+        >>> next(it)
+        [1, 4]
+        >>> next(it)
+        [1, 5]
+        >>> next(it)
+        [2, 3]
+        >>> next(it)
+        [2, 4]
+        >>> next(it)
+        [2, 6]
+    """
+    cdef bitCLQ* K
+
+    def __init__(self, G, parts, int prec_depth=5):
+        KCliqueIterator_base.__init__(self, G, parts)
+        self.K = new bitCLQ(self.incidences, self.n, self.first_per_part, self.k)
+
+    def __dealloc__(self):
+        del self.K
+
+    def __next__(self):
+        if self.K.next():
+            self.k_clique = self.K.k_clique()
+            return self.make_k_clique()
+        else:
+            raise StopIteration
+
+def KCliqueIterator(*args, algorithm='kpkc', **kwds):
+    """
+    Iterate over all k-cliques of a graph.
+
+    INPUT:
+
+    - ``G`` -- edges of a k-partite graph
+    - ``parts`` -- a list of parts of the graph; each graph has list of nodes
+    - ``algorithm`` -- (default: ``'kpkc'``); the algorithm to use; one of ``'kpkc'`` or ``'bitCLQ'``
+    - ``prec_depth`` -- (optional keyword); to which depth the pivot shall be precicely determined
+
+    EXAMPLES::
+
+        >>> from kpkc.kpkc import KCliqueIterator
+        >>> list(KCliqueIterator([[1,2]], parts=[[1], [2]]))
         [[1, 2]]
         >>> edges = [[i, (i+3) % 9] for i in range(9)] + [[i, ((i+4) % 9) if i % 3 != 2 else ((i+1) % 9)] for i in range(9)]
-        >>> output = list(KPartiteKClique_iter(edges, parts=[[0,1,2], [3,4,5], [6,7,8]]))
+        >>> output = list(KCliqueIterator(edges, parts=[[0,1,2], [3,4,5], [6,7,8]]))
         >>> from sys import platform
         >>> platform == "darwin" or output == [[2, 5, 8], [0, 4, 8], [1, 4, 7], [2, 3, 7], [1, 5, 6], [0, 3, 6]]  # output not on mac
         True
         >>> platform != "darwin" or output == [[0, 4, 8], [2, 5, 8], [1, 4, 7], [2, 3, 7], [0, 3, 6], [1, 5, 6]]  # output on mac
         True
-        >>> list(KPartiteKClique_iter(edges, parts=[[0,1,2], [3,4,5], [6,7,8]], algorithm='bitCLQ'))
+        >>> list(KCliqueIterator(edges, parts=[[0,1,2], [3,4,5], [6,7,8]], algorithm='bitCLQ'))
         [[0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
-
-    The option ``benchmark=True`` yields an empty list first,
-    to allow excluding the python overhead from benchmarking::
-
-        >>> list(KPartiteKClique_iter(edges, parts=[[0,1,2], [3,4,5], [6,7,8]], algorithm='bitCLQ', benchmark=True))
-        [[], [0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
 
     One may give parts as a list or tuple::
 
-        >>> list(KPartiteKClique_iter(edges, parts=((0,1,2), (3,4,5), (6,7,8)), algorithm='bitCLQ', benchmark=True))
-        [[], [0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
+        >>> list(KCliqueIterator(edges, parts=((0,1,2), (3,4,5), (6,7,8)), algorithm='bitCLQ'))
+        [[0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
 
     """
-    cdef int i, j
-    cdef MemoryAllocator mem = MemoryAllocator()
-
-    assert isinstance(parts, (list, tuple)), "parts must be a tuple or list"
-
-    cdef int k = len(parts)
-    cdef int* first_per_part = <int*> mem.allocarray(k + 1, sizeof(int))
-
-    cdef int counter = 0
-    for i in range(k):
-        first_per_part[i] = counter
-        counter += len(parts[i])
-
-    cdef int n = counter
-    first_per_part[k] = n
-
-    cdef bool** incidences = <bool**> mem.allocarray(n, sizeof(bool*))
-    for i in range(n):
-        incidences[i] = <bool*> mem.calloc(n, sizeof(bool))
-
-    cdef int* id_to_part = <int*> mem.allocarray(n, sizeof(int))
-    for i in range(k):
-        for j in range(first_per_part[i], first_per_part[i+1]):
-            id_to_part[j] = i
-
-    def id_to_vertex(index):
-        i = id_to_part[index]
-        return parts[i][index - first_per_part[i]]
-
-    cdef dict vertex_to_id = {id_to_vertex(i): i for i in range(n)}
-
-    cdef int ui, vi
-
-    if hasattr(G, "edge_iterator"):
-        # G is probably a SageMath graph.
-        G = G.edge_iterator(sort_vertices=False, labels=False)
-
-    for u, v in G:
-        ui = vertex_to_id[u]
-        vi = vertex_to_id[v]
-        if id_to_part[ui] == id_to_part[vi]:
-            raise ValueError("not a k-partite graph")
-        incidences[ui][vi] = True
-        incidences[vi][ui] = True
-
-    if benchmark:
-        # We will yield here.
-        # This allows ignoring the python overhead for benchmarking.
-        yield []
-
-    cdef KPartiteKClique* K
-    cdef bitCLQ* K1
-
     if algorithm == 'kpkc':
-        K = new KPartiteKClique(incidences, n, first_per_part, k, prec_depth)
-
-        try:
-            sig_on()
-            foo = K.next()
-            sig_off()
-            while foo:
-                yield [id_to_vertex(K.k_clique()[i]) for i in range(k)]
-                sig_on()
-                foo = K.next()
-                sig_off()
-        finally:
-            del K
-
+        return KPartiteKClique_wrapper(*args, **kwds)
     elif algorithm == 'bitCLQ':
-        K1 = new bitCLQ(incidences, n, first_per_part, k, prec_depth)
-
-        try:
-            sig_on()
-            foo = K1.next()
-            sig_off()
-            while foo:
-                yield [id_to_vertex(K1.k_clique()[i]) for i in range(k)]
-                sig_on()
-                foo = K1.next()
-                sig_off()
-        finally:
-            del K1
+        return bitCLQ_wrapper(*args, **kwds)
     else:
         raise ValueError("unkown algorithm")
