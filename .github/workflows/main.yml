@@ -16,7 +16,8 @@ jobs:
             matrix:
                 os: [ubuntu-latest, macos-latest]
                 python-version: [3.6, 3.7, 3.8, 3.9]
-                flags: [-mpopcnt -mbmi -UNDEBUG, -mpopcnt -mbmi]
+                flags: [-UNDEBUG, ]
+                march: [-march=native, ]
                 include:
                     - os: windows-latest
                       python-version: 3.6
@@ -26,8 +27,11 @@ jobs:
                       python-version: 3.8
                     - os: windows-latest
                       python-version: 3.9
+                exclude:
+                    - os: macos-latest
+                      march: -march=native
         env:
-            CFLAGS: ${{ matrix.flags }}
+            CFLAGS: ${{ matrix.flags }}-${{ matrix.march }}
         steps:
         - name: Set up the repository
           uses: actions/checkout@v2
