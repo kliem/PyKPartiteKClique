@@ -40,7 +40,7 @@ jobs:
             C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-version }} -m pip install setuptools cysignals Cython Sphinx flake8 networkx'
         - name: install
           run: |
-            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-version }} setup.py build_ext -i'
+            C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && export CFLAGS="-march=native -UNDEBUG" && python3.${{ matrix.python-version }} setup.py build_ext -i'
         - name: test
           run: |
             C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && python3.${{ matrix.python-version }} test.py'
