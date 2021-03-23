@@ -19,7 +19,13 @@ jobs:
                 debug: [true, false]
                 include:
                     - os: windows-latest
-                      python-version: [3.6, 3.7, 3.8, 3.9]
+                      python-version: 3.6
+                    - os: windows-latest
+                      python-version: 3.7
+                    - os: windows-latest
+                      python-version: 3.8
+                    - os: windows-latest
+                      python-version: 3.9
         steps:
         - name: Set up the repository
           uses: actions/checkout@v2
