@@ -47,11 +47,11 @@ jobs:
         - name: Freeze pip
           run: |
               pip freeze
-        - if: (${{ matrix.debug }} == 'true') && (runner.os != 'Windows')
+        - if: ${{ matrix.debug }} == 'true' && runner.os != 'Windows'
           name: setting flags (debug)
           run: |
               export CFLAGS="-mpopcnt -mbmi -UNDEBUG"
-        - if: ($${{ matrix.debu }} != 'true') && (runner.os != 'Windows')
+        - if: ${{ matrix.debug }} != 'true' && runner.os != 'Windows'
           name: setting flags (no debug)
           run: |
               export CFLAGS="-mpopcnt -mbmi -O3"
