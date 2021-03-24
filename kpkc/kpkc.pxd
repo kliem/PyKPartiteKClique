@@ -8,12 +8,12 @@ cdef extern from "cppkpkc/kpkc.cpp":
         KPartiteKClique(bool **, int n_vertices, int* first_per_part, int k)
         KPartiteKClique(bool **, int n_vertices, int* first_per_part, int k, int prec_depth)
         KPartiteKClique()
-        bool next()
+        bool next() except +KeyboardInterrupt
         const int* k_clique()
 
     cdef cppclass bitCLQ:
         bitCLQ(bool **, int n_vertices, int* first_per_part, int k)
         bitCLQ(bool **, int n_vertices, int* first_per_part, int k, int prec_depth)
         bitCLQ()
-        bool next()
+        bool next() except +KeyboardInterrupt
         const int* k_clique()
