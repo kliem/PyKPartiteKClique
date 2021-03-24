@@ -29,7 +29,7 @@ jobs:
                     - os: windows-latest
                       flags: -UNDEBUG
         env:
-            CFLAGS: ${{ matrix.flags }}-${{ matrix.march }}
+            CFLAGS: ${{ matrix.flags }} ${{ matrix.march }}
         steps:
         - name: Set up the repository
           uses: actions/checkout@v2
