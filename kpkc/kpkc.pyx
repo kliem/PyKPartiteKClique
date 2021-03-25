@@ -1,5 +1,3 @@
-from .cysignals cimport sig_on, sig_off
-
 from .memory_allocator cimport MemoryAllocator
 
 cdef class KCliqueIterator_base:

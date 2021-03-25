@@ -52,15 +52,18 @@ class kpkcTester:
             _ = next(it)
         except StopIteration:
             b = time()
-            if first_only:
-                return b-a
-            return b-a, b-a
+            yield b-a
+            if not first_only:
+                yield b-a
+            return
         b = time()
+        yield b-a
         if first_only:
-            return b-a
-        sum(1 for _ in it)
+            return
         c = time()
-        return b-a, c - a
+        sum(1 for _ in it)
+        d = time()
+        yield d-c + b-a
 
     def kpkc(self, prec_depth=5):
         it = KCliqueIterator(self.edges, self.parts, prec_depth=prec_depth, algorithm='kpkc')
