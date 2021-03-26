@@ -38,4 +38,7 @@ for i in range(2, 7):
 for i in range(5):
     _test(10, 0, 10, 0.8, 0.9)
 
+for i in range(20):
+    _test(10, 0, 5, 0.8, 0.9)
+
 _test(61, 1, 1, 1, 1)
