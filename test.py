@@ -3,7 +3,6 @@ from random import random, randint
 import cydoctest
 import kpkc.kpkc
 
-cydoctest.testmod(kpkc.kpkc, verbose=True)
 
 def _test(k, min_part_size, max_part_size, dens1, dens2):
     print("Testing a graph with {} parts of sizes {} to {} and density between {} and {}".format(
@@ -23,6 +22,11 @@ def _test(k, min_part_size, max_part_size, dens1, dens2):
                 raise
         return
     G.check()
+
+
+# The actual tests.
+
+cydoctest.testmod(kpkc.kpkc, verbose=True)
 
 for i in range(2, 7):
     min_part_size = randint(5, 40-4*i)
