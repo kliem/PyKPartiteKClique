@@ -17,19 +17,18 @@ def obtain_tester(*args):
 def format_number(f):
     return "{0:4.2e}".format(f)
 
-def benchmark_instance_with_alg(G, G1, alg, first_only):
+def benchmark_instance_with_alg(G, G1, alg):
     output = {}
     if alg in ['kpkc', 'bitCLQ', 'networkx']:
         try:
             alarm(timeout)
-            out = G.benchmark(alg, first_only=first_only)
+            out = G.benchmark(alg)
             output['first'] = format_number(next(out))
-            if not first_only:
-                output['all'] = format_number(next(out))
+            output['all'] = format_number(next(out))
         except (KeyboardInterrupt, RuntimeError):
             if not 'first' in output:
                 output['first'] = "----    "
-            if not first_only and not 'all' in output:
+            if not 'all' in output:
                 output['all'] = "----    "
         finally:
             cancel_alarm()
@@ -50,9 +49,7 @@ def benchmark_instance_with_alg(G, G1, alg, first_only):
 
     return output
 
-def benchmark_instance(args, first_only=False, verbose=True):
-    if len(args) == 1:
-        first_only = True
+def benchmark_instance(args, verbose=True):
     output = {}
     G = obtain_tester(*args)
 
@@ -60,7 +57,19 @@ def benchmark_instance(args, first_only=False, verbose=True):
     G1 = Graph(G.edges)
 
     for alg in algorithms:
-        output[alg] = benchmark_instance_with_alg(G, G1, alg, first_only)
+        output[alg] = benchmark_instance_with_alg(G, G1, alg)
+
+    # Remove 'all' if it is the same as 'first'.
+
+    if all(output[alg]['all'] == output[alg]['first'] for alg in algorithms if 'all' in output[alg]):
+        for alg in algorithms:
+            if 'all' in output[alg]:
+                del output[alg]['all']
+
+    if all(output[alg]['all'] == "----    " for alg in algorithms if 'all' in output[alg]):
+        for alg in algorithms:
+            if 'all' in output[alg]:
+                del output[alg]['all']
 
     if verbose:
         print(args, output)
