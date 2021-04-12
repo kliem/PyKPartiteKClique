@@ -29,6 +29,45 @@ def get_random_k_partite_graph(n_parts, min_part_size, max_part_size, dens1, den
     return kpkcTester(edges, parts)
 
 
+def get_random_k_partite_graph_2(n_parts, max_part_size, dens):
+    r"""
+    Generate random k-partite graphs.
+
+    This choice seems more natural for some settings.
+
+    If parts have less choices, those choices are more popular.
+
+    Concretely, the probability of an edge between two vertices of two parts is determined
+    by the number of vertices in the smaller part ``l`` by:
+
+    ``1/(largest_part - 1.0) * ( (largest_part - l) + (l - 1.0)*dens)``
+    """
+    B = list(range(n_parts))
+    # Construct nodes
+    offset = 0
+    sizes = [1 + ((max_part_size - 1) * i)//(n_parts) for i in range(1, n_parts + 1)]
+    parts = []
+    for b in B:
+        parts.append(list(range(offset, offset+sizes[b])))
+        offset += sizes[b]
+
+    weights_per_part = [
+            (max_part_size - sizes[i]) / (max_part_size - 1.0)
+            + (sizes[i] - 1.0) * dens / (max_part_size - 1.0)
+            for i in range(n_parts)]
+
+    edges = []
+
+    for b in range(n_parts):
+        for i in parts[b]:
+            for b1 in range(b+1, n_parts):
+                for i1 in parts[b1]:
+                    if random() < max(weights_per_part[b], weights_per_part[b1]):
+                        edges.append([i, i1])
+
+    return kpkcTester(edges, parts)
+
+
 class kpkcTester:
     def __init__(self, edges, parts):
         self.edges = edges
