@@ -19,7 +19,7 @@ def format_number(f):
 
 def benchmark_instance_with_alg(G, G1, alg):
     output = {}
-    if alg in ['kpkc', 'bitCLQ', 'networkx']:
+    if alg in ['kpkc', 'FindClique', 'networkx']:
         try:
             alarm(timeout)
             out = G.benchmark(alg)
@@ -53,7 +53,7 @@ def benchmark_instance(args, verbose=True):
     output = {}
     G = obtain_tester(*args)
 
-    algorithms = ['kpkc', 'bitCLQ', 'networkx', 'Cliquer', 'mcqd']
+    algorithms = ['kpkc', 'FindClique', 'networkx', 'Cliquer', 'mcqd']
     G1 = Graph(G.edges)
 
     for alg in algorithms:
@@ -240,7 +240,7 @@ instances = [
         [100, 100, 0.9],
         ]
 
-all_algs = ('kpkc', 'bitCLQ', 'networkx')
+all_algs = ('kpkc', 'FindClique', 'networkx')
 first_algs = all_algs + ('Cliquer', 'mcqd')
 
 def print_instance(instance):

@@ -16,7 +16,7 @@ def _test(k, min_part_size, max_part_size, dens1, dens2):
             if not e.args[0] == "parts may not be empty":
                 raise
         try:
-            list(G.bitCLQ())
+            list(G.FindClique())
         except ValueError as e:
             if not e.args[0] == "parts may not be empty":
                 raise

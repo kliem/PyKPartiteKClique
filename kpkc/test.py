@@ -80,8 +80,8 @@ class kpkcTester:
         from time import time
         if algorithm == 'kpkc':
             it = self.kpkc(prec_depth=prec_depth)
-        elif algorithm == 'bitCLQ':
-            it = self.bitCLQ()
+        elif algorithm == 'FindClique':
+            it = self.FindClique()
         else:
             it = self.networkx(benchmark=True)
             _ = next(it)
@@ -108,8 +108,8 @@ class kpkcTester:
         it = KCliqueIterator(self.edges, self.parts, prec_depth=prec_depth, algorithm='kpkc')
         return it
 
-    def bitCLQ(self):
-        it = KCliqueIterator(self.edges, self.parts, algorithm='bitCLQ')
+    def FindClique(self):
+        it = KCliqueIterator(self.edges, self.parts, algorithm='FindClique')
         return it
 
     def networkx(self, benchmark=False):
@@ -126,7 +126,7 @@ class kpkcTester:
             T1 = set(tuple(sorted(c)) for c in it)
             assert T == T1
 
-        test(self.bitCLQ())
+        test(self.FindClique())
         for i in range(5):
             test(self.kpkc(prec_depth=i))
 

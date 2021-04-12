@@ -13,7 +13,7 @@ cdef class KCliqueIterator_base:
     .. SEEALSO::
 
         :class:`KPartiteKClique_wrapper`
-        :class:`bitCLQ_wrapper`
+        :class:`FindClique_wrapper`
     """
     cdef MemoryAllocator mem
     cdef bool **incidences
@@ -126,7 +126,7 @@ cdef class KPartiteKClique_wrapper(KCliqueIterator_base):
         else:
             raise StopIteration
 
-cdef class bitCLQ_wrapper(KCliqueIterator_base):
+cdef class FindClique_wrapper(KCliqueIterator_base):
     """
     Iterate over all k-cliques of a graph using the algorithm ``'kpkc'``.
 
@@ -141,9 +141,9 @@ cdef class bitCLQ_wrapper(KCliqueIterator_base):
 
     EXAMPLES::
 
-        >>> from kpkc.kpkc import bitCLQ_wrapper
-        >>> it = bitCLQ_wrapper([[1, 3], [2, 3], [1, 4], [2, 4], [1, 5], [2, 6]], [[1, 2], [3, 4, 5, 6]])
-        >>> it = bitCLQ_wrapper([[1, 3], [2, 3], [1, 4], [2, 4], [1, 5], [2, 6]], [[1, 2], [3, 4, 5, 6]])
+        >>> from kpkc.kpkc import FindClique_wrapper
+        >>> it = FindClique_wrapper([[1, 3], [2, 3], [1, 4], [2, 4], [1, 5], [2, 6]], [[1, 2], [3, 4, 5, 6]])
+        >>> it = FindClique_wrapper([[1, 3], [2, 3], [1, 4], [2, 4], [1, 5], [2, 6]], [[1, 2], [3, 4, 5, 6]])
         >>> next(it)
         [1, 3]
         >>> next(it)
@@ -157,11 +157,11 @@ cdef class bitCLQ_wrapper(KCliqueIterator_base):
         >>> next(it)
         [2, 6]
     """
-    cdef bitCLQ* K
+    cdef FindClique* K
 
     def __init__(self, G, parts, int prec_depth=5):
         KCliqueIterator_base.__init__(self, G, parts)
-        self.K = new bitCLQ(self.incidences, self.n, self.first_per_part, self.k)
+        self.K = new FindClique(self.incidences, self.n, self.first_per_part, self.k)
 
     def __dealloc__(self):
         del self.K
@@ -182,7 +182,7 @@ def KCliqueIterator(*args, algorithm='kpkc', **kwds):
 
     - ``G`` -- edges of a k-partite graph
     - ``parts`` -- a list of parts of the graph; each graph has list of nodes
-    - ``algorithm`` -- (default: ``'kpkc'``); the algorithm to use; one of ``'kpkc'`` or ``'bitCLQ'``
+    - ``algorithm`` -- (default: ``'kpkc'``); the algorithm to use; one of ``'kpkc'`` or ``'FindClique'``
     - ``prec_depth`` -- (optional keyword); to which depth the pivot shall be precicely determined
 
     EXAMPLES::
@@ -197,18 +197,18 @@ def KCliqueIterator(*args, algorithm='kpkc', **kwds):
         True
         >>> platform != "darwin" or output == [[0, 4, 8], [2, 5, 8], [1, 4, 7], [2, 3, 7], [0, 3, 6], [1, 5, 6]]  # output on mac
         True
-        >>> list(KCliqueIterator(edges, parts=[[0,1,2], [3,4,5], [6,7,8]], algorithm='bitCLQ'))
+        >>> list(KCliqueIterator(edges, parts=[[0,1,2], [3,4,5], [6,7,8]], algorithm='FindClique'))
         [[0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
 
     One may give parts as a list or tuple::
 
-        >>> list(KCliqueIterator(edges, parts=((0,1,2), (3,4,5), (6,7,8)), algorithm='bitCLQ'))
+        >>> list(KCliqueIterator(edges, parts=((0,1,2), (3,4,5), (6,7,8)), algorithm='FindClique'))
         [[0, 3, 6], [0, 4, 8], [1, 4, 7], [1, 5, 6], [2, 3, 7], [2, 5, 8]]
 
     """
     if algorithm == 'kpkc':
         return KPartiteKClique_wrapper(*args, **kwds)
-    elif algorithm == 'bitCLQ':
-        return bitCLQ_wrapper(*args, **kwds)
+    elif algorithm == 'FindClique':
+        return FindClique_wrapper(*args, **kwds)
     else:
         raise ValueError("unkown algorithm")

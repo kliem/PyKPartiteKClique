@@ -11,9 +11,9 @@ cdef extern from "cppkpkc/kpkc.cpp":
         bool next() except +
         const int* k_clique()
 
-    cdef cppclass bitCLQ:
-        bitCLQ(bool **, int n_vertices, int* first_per_part, int k) except +
-        bitCLQ(bool **, int n_vertices, int* first_per_part, int k, int prec_depth) except +
-        bitCLQ()
-        bool next() except +
-        const int* k_clique()
+    cdef cppclass FindClique(KPartiteKClique):
+        FindClique(bool **, int n_vertices, int* first_per_part, int k) except +
+        FindClique(bool **, int n_vertices, int* first_per_part, int k, int prec_depth) except +
+        FindClique()
+        #bool next() except +
+        #const int* k_clique()

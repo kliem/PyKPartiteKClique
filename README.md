@@ -74,7 +74,7 @@ The results have been obtained with an Intel i7-7700 CPU @3.60GHz.
 We use the following algorithms/implementations:
 
 - `kpkc` (our implementation)
-- `bitCLQ` (our implementation)
+- `FindClique` (our implementation)
 - `Cliquer` (exposed via `SageMath`)
 - `networkx`
 - `mcqd` (exposed via `SageMath`)
@@ -89,7 +89,7 @@ Note that the graphs in `sample_graphs` do not have k-cliques.
 Dashes indicate that the computation was interrupted after 1000s (without
 determination).
 
-Graph                       | kpkc       | bitCLQ     | networkx   | Cliquer    | mcqd
+Graph                       | kpkc       | FindClique | networkx   | Cliquer    | mcqd
 0                           | 1.65e+01   | ----       | ----       | ----       | ----
 1                           | 1.85e+01   | ----       | ----       | ----       | ----
 2                           | 1.81e+01   | ----       | ----       | ----       | ----
@@ -258,7 +258,7 @@ Graph                       | kpkc       | bitCLQ     | networkx   | Cliquer    
 We time how long it takes to find all k-cliques.
 We only record it, if it differs from the timing to check for k-cliques.
 
-Graph                       | kpkc       | bitCLQ     | networkx
+Graph                       | kpkc       | FindClique | networkx
 (5, 50, 50, 0.15, 0.15)     | 6.54e-04   | 3.19e-05   | 1.23e-02
 (5, 50, 50, 0.2, 0.2)       | 8.53e-04   | 9.18e-05   | 2.34e-02
 (5, 50, 50, 0.25, 0.25)     | 2.46e-03   | 6.29e-04   | 4.48e-02
