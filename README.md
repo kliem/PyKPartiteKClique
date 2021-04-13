@@ -323,3 +323,16 @@ We only record it, if it differs from the timing to check for k-cliques.
 | (20, 100, 0.25)             | 5.65e+01   | nan        | nan      |
 | (50, 10, 0.83)              | 1.50e+01   | 5.76e+00   | nan      |
 | (50, 10, 0.85)              | nan        | 1.22e+02   | nan      |
+
+## Conclusions
+
+`kpkc` and `FindClique` appear to be best choices for finding k-cliques in k-partite graphs.
+- If all vertices are expected to have somewhat the same number of neighbors,
+  then `FindClique` is the best choice.
+- If there are many edges and the expected number of k-cliques is large,
+  then `FindClique` is the best choice to obtain
+  some k-cliques.
+- If only few k-cliques (if any) are exepcted and
+  vertices in larger parts have fewer neighbors
+  then vertices in smaller parts, then `kpkc` is
+  the best choice to obtain all k-cliques.
