@@ -109,14 +109,11 @@ cdef class KPartiteKClique_wrapper(KCliqueIterator_base):
         >>> next(it)
         [1, 5]
     """
-    cdef KPartiteKClique* K
+    cdef KPartiteKClique K
 
     def __init__(self, G, parts, int prec_depth=5):
         KCliqueIterator_base.__init__(self, G, parts)
-        self.K = new KPartiteKClique(self.incidences, self.n, self.first_per_part, self.k, prec_depth)
-
-    def __dealloc__(self):
-        del self.K
+        self.K.init(self.incidences, self.n, self.first_per_part, self.k, prec_depth)
 
     def __next__(self):
         cdef bool has_next = self.K.next()
@@ -157,14 +154,11 @@ cdef class FindClique_wrapper(KCliqueIterator_base):
         >>> next(it)
         [2, 6]
     """
-    cdef FindClique* K
+    cdef FindClique K
 
     def __init__(self, G, parts, int prec_depth=5):
         KCliqueIterator_base.__init__(self, G, parts)
-        self.K = new FindClique(self.incidences, self.n, self.first_per_part, self.k)
-
-    def __dealloc__(self):
-        del self.K
+        self.K.init(self.incidences, self.n, self.first_per_part, self.k)
 
     def __next__(self):
         cdef bool has_next = self.K.next()
