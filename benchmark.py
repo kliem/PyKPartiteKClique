@@ -1,10 +1,11 @@
 from time import time
 from kpkc.test import get_random_k_partite_graph, get_random_k_partite_graph_2, load_tester
-from cysignals.alarm import *
-from sage.all import *
+from cysignals.alarm import alarm, cancel_alarm
+from sage.graphs.graph import Graph
 import multiprocessing as mp
 
 timeout = 1000
+
 
 def obtain_tester(*args):
     if len(args) == 1:
@@ -14,8 +15,10 @@ def obtain_tester(*args):
     else:
         return get_random_k_partite_graph_2(*args)
 
+
 def format_number(f):
     return "{0:4.2e}".format(f)
+
 
 def benchmark_instance_with_alg(G, G1, alg):
     output = {}
@@ -26,9 +29,9 @@ def benchmark_instance_with_alg(G, G1, alg):
             output['first'] = format_number(next(out))
             output['all'] = format_number(next(out))
         except (KeyboardInterrupt, RuntimeError):
-            if not 'first' in output:
+            if 'first' not in output:
                 output['first'] = "----    "
-            if not 'all' in output:
+            if 'all' not in output:
                 output['all'] = "----    "
         finally:
             cancel_alarm()
@@ -46,8 +49,8 @@ def benchmark_instance_with_alg(G, G1, alg):
         finally:
             cancel_alarm()
 
-
     return output
+
 
 def benchmark_instance(args, verbose=True):
     output = {}
@@ -75,6 +78,7 @@ def benchmark_instance(args, verbose=True):
         print(args, output)
 
     return output
+
 
 instances = [
         [0],
@@ -243,11 +247,13 @@ instances = [
 all_algs = ('kpkc', 'FindClique', 'networkx')
 first_algs = all_algs + ('Cliquer', 'mcqd')
 
+
 def print_instance(instance):
     if len(instance) == 1:
         return "{}".format(instance[0])
     else:
         return "{}".format(tuple(instance))
+
 
 def run_benchmarks(n_threads=1):
     pool = mp.Pool(n_threads)
@@ -258,7 +264,7 @@ def run_benchmarks(n_threads=1):
             a.write('{:28}| {:10} | {:10} | {}\n'.format('graph', *all_algs))
             f.write('{:28}| {:10} | {:10} | {:10} | {:10} | {}\n'.format('graph', *first_algs))
 
-            for i,instance in enumerate(instances):
+            for i, instance in enumerate(instances):
                 print(instance)
                 out = results[i]
                 print(out)
