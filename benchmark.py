@@ -30,9 +30,9 @@ def benchmark_instance_with_alg(G, G1, alg):
             output['all'] = format_number(next(out))
         except (KeyboardInterrupt, RuntimeError):
             if 'first' not in output:
-                output['first'] = "&mdash; "
+                output['first'] = "nan     "
             if 'all' not in output:
-                output['all'] = "&mdash; "
+                output['all'] = "nan     "
         finally:
             cancel_alarm()
 
@@ -45,7 +45,7 @@ def benchmark_instance_with_alg(G, G1, alg):
             b = time()
             output['first'] = format_number(b-a)
         except (KeyboardInterrupt, RuntimeError):
-            output['first'] = "&mdash; "
+            output['first'] = "nan     "
         finally:
             cancel_alarm()
 
@@ -69,7 +69,7 @@ def benchmark_instance(args, verbose=True):
             if 'all' in output[alg]:
                 del output[alg]['all']
 
-    if all(output[alg]['all'] == "&mdash; " for alg in algorithms if 'all' in output[alg]):
+    if all(output[alg]['all'] == "nan     " for alg in algorithms if 'all' in output[alg]):
         for alg in algorithms:
             if 'all' in output[alg]:
                 del output[alg]['all']
