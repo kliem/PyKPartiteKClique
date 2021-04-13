@@ -8,8 +8,12 @@ cdef extern from "cppkpkc/kpkc.cpp":
         void init(bool **, int n_vertices, int* first_per_part, int k) except +
         void init(bool **, int n_vertices, int* first_per_part, int k, int prec_depth) except +
         KPartiteKClique()
-        bool next() except +
         const int* k_clique()
+
+        # Do NOT wrap this in cysignals sig_on/sig_off, it has its own interrupt handling.
+        # Its own interrupt handling exits at safe states, so that this can be called again
+        # to continue.
+        bool next() except +
 
     cdef cppclass FindClique(KPartiteKClique):
         void init(bool **, int n_vertices, int* first_per_part, int k) except +
