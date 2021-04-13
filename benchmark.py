@@ -30,9 +30,9 @@ def benchmark_instance_with_alg(G, G1, alg):
             output['all'] = format_number(next(out))
         except (KeyboardInterrupt, RuntimeError):
             if 'first' not in output:
-                output['first'] = "----    "
+                output['first'] = "&mdash; "
             if 'all' not in output:
-                output['all'] = "----    "
+                output['all'] = "&mdash; "
         finally:
             cancel_alarm()
 
@@ -45,7 +45,7 @@ def benchmark_instance_with_alg(G, G1, alg):
             b = time()
             output['first'] = format_number(b-a)
         except (KeyboardInterrupt, RuntimeError):
-            output['first'] = "----    "
+            output['first'] = "&mdash; "
         finally:
             cancel_alarm()
 
@@ -69,7 +69,7 @@ def benchmark_instance(args, verbose=True):
             if 'all' in output[alg]:
                 del output[alg]['all']
 
-    if all(output[alg]['all'] == "----    " for alg in algorithms if 'all' in output[alg]):
+    if all(output[alg]['all'] == "&mdash; " for alg in algorithms if 'all' in output[alg]):
         for alg in algorithms:
             if 'all' in output[alg]:
                 del output[alg]['all']
@@ -261,15 +261,17 @@ def run_benchmarks(n_threads=1):
     print('done')
     with open('all.md', 'w') as a:
         with open('first.md', 'w') as f:
-            a.write('{:28}| {:10} | {:10} | {}\n'.format('graph', *all_algs))
-            f.write('{:28}| {:10} | {:10} | {:10} | {:10} | {}\n'.format('graph', *first_algs))
+            a.write('| {:26}| {:10} | {:10} | {:10} |\n'.format('Graph', *all_algs))
+            a.write('  ---' + ' '*16 + (' '*7 + '| ---')*3)
+            f.write('| {:26}| {:10} | {:10} | {:10} | {:10} | {:10} |\n'.format('Graph', *first_algs))
+            f.write('  ---' + ' '*16 + (' '*7 + '| ---')*5)
 
             for i, instance in enumerate(instances):
                 print(instance)
                 out = results[i]
                 print(out)
-                f.write('{:28}| {:10} | {:10} | {:10} | {:10} | {}\n'.format(
+                f.write('| {:28}| {:10} | {:10} | {:10} | {:10} | {:10} |\n'.format(
                     print_instance(instance), *[out[alg]['first'] for alg in first_algs]))
                 if 'all' in out['kpkc']:
-                    a.write('{:28}| {:10} | {:10} | {}\n'.format(
+                    a.write('| {:28}| {:10} | {:10} | {:10} |\n'.format(
                         print_instance(instance), *[out[alg]['all'] for alg in all_algs]))
