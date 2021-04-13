@@ -261,15 +261,15 @@ def run_benchmarks(n_threads=1):
     print('done')
     with open('all.md', 'w') as a:
         with open('first.md', 'w') as f:
-            a.write('{:28}| {:10} | {:10} | {}\n'.format('graph', *all_algs))
-            f.write('{:28}| {:10} | {:10} | {:10} | {:10} | {}\n'.format('graph', *first_algs))
+            a.write('| {:28}| {:10} | {:10} | {}\n'.format('Graph', *all_algs))
+            f.write('| {:28}| {:10} | {:10} | {:10} | {:10} | {}\n'.format('Graph', *first_algs))
 
             for i, instance in enumerate(instances):
                 print(instance)
                 out = results[i]
                 print(out)
-                f.write('{:28}| {:10} | {:10} | {:10} | {:10} | {}\n'.format(
+                f.write('| {:28}| {:10} | {:10} | {:10} | {:10} | {}\n'.format(
                     print_instance(instance), *[out[alg]['first'] for alg in first_algs]))
                 if 'all' in out['kpkc']:
-                    a.write('{:28}| {:10} | {:10} | {}\n'.format(
+                    a.write('| {:28}| {:10} | {:10} | {}\n'.format(
                         print_instance(instance), *[out[alg]['all'] for alg in all_algs]))
