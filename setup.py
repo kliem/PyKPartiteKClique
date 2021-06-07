@@ -24,18 +24,15 @@ except ModuleNotFoundError:
 
 extensions = [
     Extension("kpkc.kpkc", sources=["kpkc/kpkc.pyx"]),
-    Extension("kpkc.memory_allocator", sources=["kpkc/memory_allocator.pyx"]),
-    (Extension("kpkc.cysignals", sources=["kpkc/cysignals.pyx"]) if has_cysignals
-        else Extension("kpkc.cysignals", sources=["kpkc/cysignals_backup.pyx"]))
 ]
 
 setup(
-    name='kpkc',
+    name='pykpkc',
     version='0.1.0',
-    description='A python interface to the cppkpkc',
+    description='A python interface to KPartiteKClique',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/kliem/Pycppkpkc',
+    url='https://github.com/kliem/PyKPartiteKClique',
     author='Jonathan Kliem',
     author_email='jonathan.kliem@gmail.com',
     license='GPLv3',

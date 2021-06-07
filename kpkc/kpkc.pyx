@@ -1,4 +1,4 @@
-from .memory_allocator cimport MemoryAllocator
+from memory_allocator cimport MemoryAllocator
 
 cdef class KCliqueIterator_base:
     """
