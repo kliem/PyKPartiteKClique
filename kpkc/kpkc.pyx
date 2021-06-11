@@ -24,8 +24,9 @@ cdef class KCliqueIterator_base:
     cdef dict vertex_to_id
     cdef dict id_to_vertex
     cdef const int* k_clique
+    cdef KPartiteKClique_base* K
 
-    def __init__(self, G, parts):
+    def __cinit__(self, G, parts, int prec_depth=5):
         cdef int i, j
         self.mem = MemoryAllocator()
         assert isinstance(parts, (list, tuple)), "parts must be a tuple or list"
@@ -77,6 +78,17 @@ cdef class KCliqueIterator_base:
             incidences[ui][vi] = True
             incidences[vi][ui] = True
 
+    def __dealloc__(self):
+        del self.K
+
+    def __next__(self):
+        cdef bool has_next = self.K.next()
+        if has_next:
+            self.k_clique = self.K.k_clique()
+            return self.make_k_clique()
+        else:
+            raise StopIteration
+
     cdef inline list make_k_clique(self):
         cdef int i
         return [self.id_to_vertex[self.k_clique[i]] for i in range(self.k)]
@@ -109,19 +121,9 @@ cdef class KPartiteKClique_wrapper(KCliqueIterator_base):
         >>> next(it)
         [1, 5]
     """
-    cdef KPartiteKClique K
 
-    def __init__(self, G, parts, int prec_depth=5):
-        KCliqueIterator_base.__init__(self, G, parts)
-        self.K.init(self.incidences, self.n, self.first_per_part, self.k, prec_depth)
-
-    def __next__(self):
-        cdef bool has_next = self.K.next()
-        if has_next:
-            self.k_clique = self.K.k_clique()
-            return self.make_k_clique()
-        else:
-            raise StopIteration
+    def __cinit__(self, G, parts, int prec_depth=5):
+        self.K = new KPartiteKClique(self.incidences, self.n, self.first_per_part, self.k, prec_depth)
 
 cdef class FindClique_wrapper(KCliqueIterator_base):
     """
@@ -154,19 +156,9 @@ cdef class FindClique_wrapper(KCliqueIterator_base):
         >>> next(it)
         [2, 6]
     """
-    cdef FindClique K
 
-    def __init__(self, G, parts, int prec_depth=5):
-        KCliqueIterator_base.__init__(self, G, parts)
-        self.K.init(self.incidences, self.n, self.first_per_part, self.k)
-
-    def __next__(self):
-        cdef bool has_next = self.K.next()
-        if has_next:
-            self.k_clique = self.K.k_clique()
-            return self.make_k_clique()
-        else:
-            raise StopIteration
+    def __cinit__(self, G, parts, int prec_depth=5):
+        self.K = new FindClique(self.incidences, self.n, self.first_per_part, self.k)
 
 def KCliqueIterator(*args, algorithm='kpkc', **kwds):
     """

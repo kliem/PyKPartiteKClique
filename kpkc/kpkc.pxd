@@ -4,10 +4,7 @@
 from libcpp cimport bool
 
 cdef extern from "cppkpkc/kpkc.cpp":
-    cdef cppclass KPartiteKClique:
-        void init(bool **, int n_vertices, int* first_per_part, int k) except +
-        void init(bool **, int n_vertices, int* first_per_part, int k, int prec_depth) except +
-        KPartiteKClique()
+    cdef cppclass KPartiteKClique_base:
         const int* k_clique()
 
         # Do NOT wrap this in cysignals sig_on/sig_off, it has its own interrupt handling.
@@ -15,7 +12,9 @@ cdef extern from "cppkpkc/kpkc.cpp":
         # to continue.
         bool next() except +
 
-    cdef cppclass FindClique(KPartiteKClique):
-        void init(bool **, int n_vertices, int* first_per_part, int k) except +
-        void init(bool **, int n_vertices, int* first_per_part, int k, int prec_depth) except +
-        FindClique()
+    cdef cppclass KPartiteKClique(KPartiteKClique_base):
+        KPartiteKClique(bool **, int n_vertices, int* first_per_part, int k, int prec_depth) except +
+        KPartiteKClique(bool **, int n_vertices, int* first_per_part, int k) except +
+
+    cdef cppclass FindClique(KPartiteKClique_base):
+        FindClique(bool **, int n_vertices, int* first_per_part, int k) except +
