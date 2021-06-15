@@ -27,8 +27,8 @@ edges::
     >>> edges = [[1, 6], [5, 2], [5, 3]]
     >>> edges += [[i, j] for i in range(2, 5) for j in range(6, 10)]
     >>> it = KCliqueIterator(edges, parts)
-    >>> list(it)
-    [[1, 6], [3, 5], [2, 5], [4, 9], [3, 9], [2, 9], [4, 8], [3, 8], [2, 8], [4, 7], [3, 7], [2, 7], [4, 6], [3, 6], [2, 6]]
+    >>> list(it)[:3]
+    [[1, 6], [3, 5], [2, 5]]
 
 The algorithm `FindClique` first selects parts with few nodes::
 
@@ -89,7 +89,7 @@ We benchmark implementations for the following graphs:
   operators.
   However, it is very much possible that the conrete crews might refuse
   to work with some truck drivers (always late) or the truck drivers
-  might to refuse to work with some crews (always order more trucks than
+  might refuse to work with some crews (always order more trucks than
   they need).
 
   In particular, the graphs in `sample_graphs/` behave somewhat like
@@ -284,7 +284,7 @@ determination).
 ### Finding all k-cliques
 
 We time how long it takes to find all k-cliques.
-We only record it, if it differs from the timing to check for k-cliques.
+Only those times different from the above are displayed.
 
 | Graph                       | kpkc       | FindClique | networkx |
   ---                         | ---        | ---        | ---
