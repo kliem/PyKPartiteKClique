@@ -15,13 +15,6 @@ class build_ext(du_build_ext):
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-try:
-    from cysignals.tests import test_sig_check
-    _ = test_sig_check()
-    has_cysignals = True
-except ModuleNotFoundError:
-    has_cysignals = False
-
 extensions = [
     Extension("kpkc.kpkc", sources=["kpkc/kpkc.pyx"]),
 ]
