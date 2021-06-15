@@ -27,7 +27,7 @@ extensions = [
 ]
 
 setup(
-    name='pykpkc',
+    name='kpkc',
     version='0.1.0',
     description='A python interface to KPartiteKClique',
     long_description=long_description,

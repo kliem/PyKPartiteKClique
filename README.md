@@ -2,16 +2,44 @@
 
 A python wrapper of https://github.com/kliem/KPartiteKClique.
 
-# Requirements
+Iterate over all k-cliques of a k-partite graph.
+
+## Requirements
 
 - `setuptools`
 - `Cython`
 
-# Recommendations
+## Quick start
 
-- `cysignals` (allow keyboard interrupt)
+A trivial example::
 
-# Benchmark
+    >>> from kpkc import KCliqueIterator
+    >>> edges = [[1, 2]]
+    >>> parts = [[1], [2]]
+    >>> it = KCliqueIterator(edges, parts)
+    >>> list(it)
+    [[1, 2]]
+
+The default algorithm is `kpkc`, which first selects nodes with few
+edges::
+
+    >>> parts = [[1, 2, 3, 4], [5, 6, 7, 8, 9]]
+    >>> edges = [[1, 6], [5, 2], [5, 3]]
+    >>> edges += [[i, j] for i in range(2, 5) for j in range(6, 10)]
+    >>> it = KCliqueIterator(edges, parts)
+    >>> list(it)
+    [[1, 6], [3, 5], [2, 5], [4, 9], [3, 9], [2, 9], [4, 8], [3, 8], [2, 8], [4, 7], [3, 7], [2, 7], [4, 6], [3, 6], [2, 6]]
+
+The algorithm `FindClique` first selects parts with few nodes::
+
+    >>> parts = [[1, 2, 3, 4], [5, 6, 7, 8, 9]]
+    >>> edges = [[1, 6], [5, 2], [5, 3]]
+    >>> edges += [[i, j] for i in range(2, 5) for j in range(6, 10)]
+    >>> it = KCliqueIterator(edges, parts, algorithm='FindClique')
+    >>> list(it)
+    [[1, 6], [2, 5], [2, 6], [2, 7], [2, 8], [2, 9], [3, 5], [3, 6], [3, 7], [3, 8], [3, 9], [4, 6], [4, 7], [4, 8], [4, 9]]
+
+## Benchmarks
 
 We benchmark implementations for the following graphs:
 
@@ -79,7 +107,7 @@ We use the following algorithms/implementations:
 - `networkx`
 - `mcqd` (exposed via `SageMath`)
 
-## Checking for a k-clique
+### Checking for a k-clique
 
 We time how long it takes to either determine the clique number or to
 find the first k-clique, if any.
@@ -253,8 +281,7 @@ determination).
 | (100, 100, 0.89)            | nan        | 1.02e-04   | nan        | nan        | nan      |
 | (100, 100, 0.9)             | nan        | 8.75e-05   | nan        | nan        | nan      |
 
-
-## Finding all k-cliques
+### Finding all k-cliques
 
 We time how long it takes to find all k-cliques.
 We only record it, if it differs from the timing to check for k-cliques.
@@ -324,7 +351,7 @@ We only record it, if it differs from the timing to check for k-cliques.
 | (50, 10, 0.83)              | 1.50e+01   | 5.76e+00   | nan      |
 | (50, 10, 0.85)              | nan        | 1.22e+02   | nan      |
 
-## Conclusions
+### Conclusions
 
 `kpkc` and `FindClique` appear to be best choices for finding k-cliques in k-partite graphs.
 - If all vertices are expected to have somewhat the same number of neighbors,
