@@ -379,9 +379,17 @@ and
 - Mirghorbani, M. & Krokhmal, P.. (2013). On finding k-cliques in k-partite graphs. Optimization Letters. 7. 10.1007/s11590-012-0536-y
 
 It is significantly faster in finding the first k-clique:
-All cases in the above cases could be handled in much less than a
+All cases with random graphs from the above two papers could be handled in less than a
 second, with three exceptions:
 - `(100, 10, 10, 0.92, 0.92)`, which takes 5 seconds now, instead of
-  4000 seconds originally,
+  4000 seconds originally by Grunert et. al.,
 - `(100, 10, 10, 0,94, 0.94)` remains infeasible in the given time,
 - `(100, 10, 10, 0,95, 0.95)` remains infeasible in the given time.
+The original implementation of `FindClique` by Grundert et. al. apparently needed more than 100
+seconds for random graphs with several different parameters to find the
+first k-clique.
+
+The paper by Mirghorbani and Krokhmal lists several new parameters to
+time obtaining the first k-clique. We could not reproduce timings above
+one tenth of a millisecond, even in those cases that apparently took 10, 50 and 250
+seconds respectively.
