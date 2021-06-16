@@ -364,7 +364,7 @@ According to the above timings,
   than vertices in smaller parts, then `kpkc` is
   the best choice to obtain all k-cliques.
 
-Note that our implementation of `FindClique` appears to be a bit faster
+Note that our implementation of `FindClique` appears to be faster
 in finding all k-cliques than the original implementations (which are
 not published) in
 
