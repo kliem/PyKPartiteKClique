@@ -57,7 +57,7 @@ For this we use three types of graphs:
   where `k` is the number of parts,
   each part has size in `[min_s, max_s]` chosen with uniform distribution.
   Each vertex `v` is assigned a random float `p(v)` chosen with uniform
-  distribution from `[a_1,a_2]`.
+  distribution from `[a_1, a_2]`.
   For all pairs `v`, `w` from different parts the edge is generated with
   probability `(p(v) + p(w))/2`.
 
@@ -69,14 +69,14 @@ For this we use three types of graphs:
   `kpkc.test.get_random_k_partite_graph(k, min_s, max_s, a_1, a_2)`.
 - In addition we benchmark examples with paramters `(k, max_s, a)`,
   where `k` is the number of parts.
-  Parts have sizes `1 + ((max_s -1) * i) // k` for `i` in `1`, ..., `k`.
+  Parts have sizes `1 + ((max_s -1) * i) // k` for `i` in 1, ..., k.
 
   Let `f` be the affine function determined by `f(1) = 1` and `f(a) =
   max_s`.
   For all pairs `v`, `w` from different parts with sizes `s`, `t`,
   the edge is generated with probability `f(min(s, t))`.
 
-  This means parts of size `1` will have all neighbors and the more
+  This means parts of size 1 will have all neighbors and the more
   vertices a part has, the lower will be the density of its edges.
 
   Such a random graph can be obtain with
@@ -88,7 +88,7 @@ For this we use three types of graphs:
   be less picky. Example:
 
   Suppose there is only one cement mill in the area, two concrete
-  pumps, twenty conrete mixer trucks, and a twenty concrete crews.
+  pumps, twenty conrete mixer trucks, and twenty concrete crews.
   Nobody can question the quality of the cement mill, because there is
   no alternative.
   As there is only two concrete pumps, the truck drivers will usually
@@ -101,7 +101,10 @@ For this we use three types of graphs:
   they need).
 
   In particular, the graphs in `sample_graphs/` behave somewhat like
-  this. There are more than 14 million of those that we would like to
+  this:
+  Vertices in smaller parts have more neighbors than vertices in larger
+  parts.
+  There are more than 14 million of those that we would like to
   check. This is feasible with `kpkc` and appears infeasible with the
   other implementations.
 
@@ -364,3 +367,21 @@ According to the above timings,
   vertices in larger parts have fewer neighbors
   than vertices in smaller parts, then `kpkc` is
   the best choice to obtain all k-cliques.
+
+Note that our implementation of `FindClique` appears to be a bit faster
+in finding all k-cliques than the original implementations (which are
+not published) in
+
+- Grunert, Tore & Irnich, Stefan & Zimmermann, Hans-Jürgen & Schneider, Markus & Wulfhorst, Burkhard. (2001). Cliques in k-partite Graphs and their Application in Textile Engineering
+
+and
+
+- Mirghorbani, M. & Krokhmal, P.. (2013). On finding k-cliques in k-partite graphs. Optimization Letters. 7. 10.1007/s11590-012-0536-y
+
+It is significantly faster in finding the first k-clique:
+All cases in the above cases could be handled in much less than a
+second, with three exceptions:
+- `(100, 10, 10, 0.92, 0.92)`, which takes 5 seconds now, instead of
+  4000 seconds originally,
+- `(100, 10, 10, 0,94, 0.94)` remains infeasible in the given time,
+- `(100, 10, 10, 0,95, 0.95)` remains infeasible in the given time.
