@@ -11,7 +11,7 @@ Iterate over all k-cliques of a k-partite graph.
 
 ## Quick start
 
-A trivial example::
+A trivial example:
 
     >>> from kpkc import KCliqueIterator
     >>> edges = [[1, 2]]
@@ -21,7 +21,7 @@ A trivial example::
     [[1, 2]]
 
 The default algorithm is `kpkc`, which first selects nodes with few
-edges::
+edges:
 
     >>> parts = [[1, 2, 3, 4], [5, 6, 7, 8, 9]]
     >>> edges = [[1, 6], [5, 2], [5, 3]]
@@ -30,7 +30,7 @@ edges::
     >>> list(it)[:3]
     [[1, 6], [3, 5], [2, 5]]
 
-The algorithm `FindClique` first selects parts with few nodes::
+The algorithm `FindClique` first selects parts with few nodes:
 
     >>> parts = [[1, 2, 3, 4], [5, 6, 7, 8, 9]]
     >>> edges = [[1, 6], [5, 2], [5, 3]]
@@ -41,7 +41,15 @@ The algorithm `FindClique` first selects parts with few nodes::
 
 ## Benchmarks
 
-We benchmark implementations for the following graphs:
+We benchmark the following algorithms/implementations:
+
+- `kpkc` (our implementation)
+- `FindClique` (our implementation)
+- `Cliquer` (exposed via `SageMath`)
+- `networkx`
+- `mcqd` (exposed via `SageMath`)
+
+For this we use three types of graphs:
 
 - Graphs in `sample_graphs/` that can be tested with
 `kpkc.test.load_tester`.
@@ -99,14 +107,6 @@ We benchmark implementations for the following graphs:
 
 The results have been obtained with an Intel i7-7700 CPU @3.60GHz.
 
-We use the following algorithms/implementations:
-
-- `kpkc` (our implementation)
-- `FindClique` (our implementation)
-- `Cliquer` (exposed via `SageMath`)
-- `networkx`
-- `mcqd` (exposed via `SageMath`)
-
 ### Checking for a k-clique
 
 We time how long it takes to either determine the clique number or to
@@ -114,7 +114,7 @@ find the first k-clique, if any.
 
 Note that the graphs in `sample_graphs` do not have k-cliques.
 
-Dashes indicate that the computation was interrupted after 1000s (without
+`nan` indicates that the computation was interrupted after 1000s (without
 determination).
 
 | Graph                       | kpkc       | FindClique | networkx   | Cliquer    | mcqd       |
@@ -283,8 +283,8 @@ determination).
 
 ### Finding all k-cliques
 
-We time how long it takes to find all k-cliques.
-Only those times different from the above are displayed.
+We time how long it takes to find all k-clique,
+if this time differs from above.
 
 | Graph                       | kpkc       | FindClique | networkx   |
   ---                         | ---        | ---        | ---
@@ -353,6 +353,7 @@ Only those times different from the above are displayed.
 
 ### Conclusion
 
+According to the above timings,
 `kpkc` and `FindClique` appear to be best choices for finding k-cliques in k-partite graphs.
 - If all vertices are expected to have somewhat the same number of neighbors,
   then `FindClique` is the best choice.
