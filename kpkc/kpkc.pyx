@@ -1,5 +1,8 @@
 from memory_allocator cimport MemoryAllocator
 
+cdef extern from "cppkpkc/kpkc.cpp" namespace "kpkc":
+    pass
+
 cdef class KCliqueIterator_base:
     """
     A base class to iterate over all k-clique

@@ -3,7 +3,7 @@
 # distutils: extra_compile_args= -std=c++11
 from libcpp cimport bool
 
-cdef extern from "cppkpkc/kpkc.cpp" namespace "kpkc":
+cdef extern from "cppkpkc/kpkc.h" namespace "kpkc":
     cdef cppclass KPartiteKClique_base:
         const int* k_clique()
 

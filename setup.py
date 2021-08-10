@@ -35,7 +35,7 @@ setup(
     python_requires='>=3.6',
     package_dir={'kpkc': 'kpkc'},
     install_requires=["Cython"],
-    package_data={"kpkc": ["*.pxd", "*.h", "cppkpkc/*.h", "cppkpkc/*.cpp"]},
+    package_data={"kpkc": ["*.pxd", "*.h", "cppkpkc/*.h"]},
     cmdclass={'build_ext': build_ext},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
