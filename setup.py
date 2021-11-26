@@ -21,7 +21,7 @@ extensions = [
 
 setup(
     name='kpkc',
-    version='0.1.0',
+    version='0.1.1',
     description='A python interface to KPartiteKClique',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -35,7 +35,7 @@ setup(
     python_requires='>=3.6',
     package_dir={'kpkc': 'kpkc'},
     install_requires=["Cython"],
-    package_data={"kpkc": ["*.pxd", "*.h", "cppkpkc/*.h", "cppkpkc/*.cpp"]},
+    package_data={"kpkc": ["*.pxd", "*.h", "cppkpkc/*.h"]},
     cmdclass={'build_ext': build_ext},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
