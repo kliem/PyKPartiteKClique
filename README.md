@@ -71,8 +71,8 @@ For this we use three types of graphs:
   where `k` is the number of parts.
   Parts have sizes `1 + ((max_s -1) * i) // k` for `i` in 1, ..., k.
 
-  Let `f` be the affine function determined by `f(1) = 1` and `f(a) =
-  max_s`.
+  Let `f` be the affine function determined by `f(1) = 1` and `f(max_s) =
+  a`.
   For all pairs `v`, `w` from different parts with sizes `s`, `t`,
   the edge is generated with probability `f(min(s, t))`.
 
