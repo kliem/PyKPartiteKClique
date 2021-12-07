@@ -63,11 +63,11 @@ For this we use three types of graphs:
 
   This approach is described in:
 
-  - Grunert, Tore & Irnich, Stefan & Zimmermann, Hans-Jürgen & Schneider, Markus & Wulfhorst, Burkhard. (2001). Cliques in k-partite Graphs and their Application in Textile Engineering
+  - Grünert, Tore & Irnich, Stefan & Zimmermann, Hans-Jürgen & Schneider, Markus & Wulfhorst, Burkhard. (2001). Cliques in k-partite Graphs and their Application in Textile Engineering
 
   Such a random graph can be obtain with
   `kpkc.test.get_random_k_partite_graph(k, min_s, max_s, a_1, a_2)`.
-- In addition we benchmark examples with paramters `(k, max_s, a)`,
+- In addition we benchmark examples with parameters `(k, max_s, a)`,
   where `k` is the number of parts.
   Parts have sizes `1 + ((max_s -1) * i) // k` for `i` in 1, ..., k.
 
@@ -354,24 +354,16 @@ Note that our implementation of `FindClique` appears to be faster
 in finding all k-cliques than the original implementations (which are
 not published) in
 
-- Grunert, Tore & Irnich, Stefan & Zimmermann, Hans-Jürgen & Schneider, Markus & Wulfhorst, Burkhard. (2001). Cliques in k-partite Graphs and their Application in Textile Engineering
+- Grünert, Tore & Irnich, Stefan & Zimmermann, Hans-Jürgen & Schneider, Markus & Wulfhorst, Burkhard. (2001). Cliques in k-partite Graphs and their Application in Textile Engineering
 
 and
 
 - Mirghorbani, M. & Krokhmal, P.. (2013). On finding k-cliques in k-partite graphs. Optimization Letters. 7. 10.1007/s11590-012-0536-y
 
-It is significantly faster in finding the first k-clique:
-All cases with random graphs from the above two papers could be handled in less than a
-second, with three exceptions:
-- `(100, 10, 10, 0.92, 0.92)`, which takes 5 seconds now, instead of
-  4000 seconds originally by Grunert et. al.,
-- `(100, 10, 10, 0,94, 0.94)` remains infeasible in the given time,
-- `(100, 10, 10, 0,95, 0.95)` remains infeasible in the given time.
-The original implementation of `FindClique` by Grundert et. al. apparently needed more than 100
-seconds for random graphs with several different parameters to find the
-first k-clique.
+For random graphs with parameters `(k, min_s, max_s, a_1, a_2)`
+and `k = 100` we improve the benchmarks of Grünert et. all by a factor
+of 100. Note that we also use 3.6 GHz instead of 100 MHz leaving an
+improvement factor of about 28.
 
-The paper by Mirghorbani and Krokhmal lists several new parameters to
-time obtaining the first k-clique. We could not reproduce timings above
-one tenth of a millisecond, even in those cases that apparently took 10, 50 and 250
-seconds respectively.
+Mirghorbani et. al. improved the implementation of `FindClique` by a
+factor of up to `9` in comparison to Grünert et. al.
