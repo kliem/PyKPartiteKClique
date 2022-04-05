@@ -21,7 +21,7 @@ extensions = [
 
 setup(
     name='kpkc',
-    version='0.1.1',
+    version='0.1.2a0',
     description='A python interface to KPartiteKClique',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -42,5 +42,7 @@ setup(
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3',
+        "Programming Language :: Cython",
+        "Programming Language :: C++",
         'Topic :: Scientific/Engineering :: Mathematics']
     )
